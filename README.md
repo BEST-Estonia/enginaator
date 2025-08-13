@@ -2,7 +2,7 @@
 
 In this README we go over:
 
-- Setting up a development environment for Võti Tulevikku career fair platform.
+- Setting up a development environment for engineering competition Enginaator platform.
 - Making visual and technical changes to the codebase
 - Platform cloud hosting and management
 
@@ -17,6 +17,7 @@ npx create-next-app@latest .
 npm install -D tailwindcss postcss autoprefixer
 
 3) Install framer motion
+
 npm install framer-motion
 
 4) Start the development server
