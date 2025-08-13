@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+
+  --font-poppins: var(--font-poppins), system-ui, sans-serif;
+}
