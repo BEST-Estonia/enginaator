@@ -1,7 +1,22 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  --font-poppins: var(--font-poppins), system-ui, sans-serif;
+@layer base {
+  :root {
+    --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+    --font-poppins: var(--font-poppins), system-ui, sans-serif;
+  }
 }
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
