@@ -18,7 +18,7 @@ const Sponsors = () => {
 
     <section className='py-12 bg-[hsl(0,0%,97%)]'>
       <div className="container mx-auto px-4 mb-8">
-        <h2 className="text-2xl font-bold text-center text-black">
+        <h2 className="text-2xl font-bold text-center text-black font-dm-sans">
             MEIE SPONSORID
         </h2>
       </div>

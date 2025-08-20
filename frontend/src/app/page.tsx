@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Hero from "./sections/Hero";
 import Sponsors from "./sections/Sponsors";
 import Introduction from "./sections/Introduction";
+import Fields from "./sections/Fields";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <Sponsors />
       <Introduction />
+      <Fields />
     </div>
   );
 }
