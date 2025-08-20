@@ -1,81 +1,84 @@
-"use client";
-import React, { useState } from 'react';
+"use client"
+import { useState } from 'react';
 import { Cpu, Cog, Building, Code } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-
-const fields = [
-    {
-        icon: Cpu,
-        name: "Elektroonika",
-        description: "Valdkond on suunatud neile, kes tunnevad end hästi koodimise ja elektroonikaga eksperimenteerimise maailmas. Võistlus avab ukse mitmekülgsete põnevate ülesannete lahendamiseks, alates tehisintellekti abil lasteraamatute loomisest kuni droonidel põhineva isikutuvastussüsteemi väljatöötamiseni!"
-    },
-
-    {
-        icon: Cog,
-        name: "Mehaanika",
-        description: "Mehaanika valdkonna ülesanded põhinevad mehaanilise füüsika alustaladel, kus läheb tarvis loovust ning tehnilist taipu. Eelnevatel aastatel on olnud ülesanneteks aluspinna rappumisele vastupidava ning võimalikult palju raskust taluva torni ehitamine ning liivasele maastikule sõiduvahendi loomine."
-    },
-
-    {
-        icon: Building,
-        name: "Ehitus",
-        description: "Osaledes ehituses ei tohiks olla Sulle võõras mehaaniline füüsika, lihtne elektroonika ega ei tohiks olla puudust ka loogilisest mõtlemisest. Ehituse valdkonnas paneme proovile Sinu võime projekteerida ning ellu tuua rabavaid konstruktsioone! Eelnevatel aastatel on ülesanneteks olnud avaneva silla ehitamine, võimalikult väikese soojusjuhtivusega materjali loomine ning katuse ehitamine."
-    },
-
-    {
-        icon: Code,
-        name: "IT",
-        description: "Osaledes Enginaatori IT valdkonnas saate panna enda tiimi oskused proovile nii backend kui ka frontend arenduses, võimalusega tõestada, et teil on silma disainile (UI/UX) ja arusaamisi ka riistvarast ning erinevatest suhtlusprotokollidest. 17 tunni jooksul pannakse proovile teie võime ühendada serveripoolne loogika ja silmapaistev kasutajaliidese ühtseks, toimivaks lahenduseks."
-    }
-]
-
-const Fields = () => {
+const FieldsSection = () => {
   const [activeField, setActiveField] = useState(0);
-  
+
+  const fields = [
+    {
+      icon: Cpu,
+      name: 'Elektroonika',
+      description: 'See valdkond on suunatud neile, kes tunnevad end koduselt programmeerimises ja elektroonikaga eksperimenteerimises. Võistlus avab ukse mitmesuguste põnevate ülesannete lahendamisele, alates lasteraamatute loomisest tehisintellektiga kuni droonipõhiste isikutuvastussüsteemide arendamiseni!'
+    },
+    {
+      icon: Cog,
+      name: 'Mehaanika',
+      description: 'Mehaanikaülesanded põhinevad mehaanikafüüsika põhialustel, nõudes loovust ja tehnilist nutikust. Varasematel aastatel on ülesanneteks olnud näiteks maavõnkumistele vastupidava ja võimalikult suurt raskust kannatava torni ehitamine ning liivase maastiku jaoks sõiduki loomine.'
+    },
+    {
+      icon: Building,
+      name: 'Ehitus',
+      description: 'Ehituses osaledes ei tohiks sulle võõras olla mehaanikafüüsika, lihtne elektroonika ega tohiks puududa ka loogiline mõtlemine. Ehitusvaldkonnas testime sinu võimet projekteerida ja teostada hämmastava väljanägemisega konstruktsioone! Varasematel aastatel on ülesanneteks olnud näiteks avaneva silla ehitamine, võimalikult väikese soojusjuhtivusega materjali loomine ja katusekonstruktsioon.'
+    },
+    {
+      icon: Code,
+      name: 'IT',
+      description: 'Osaledes Enginaatori IT-valdkonnas, saad testida oma meeskonna oskusi nii back-end kui ka front-end arenduses, võimalusega tõestada, et sul on silma disaini (UI/UX) jaoks ning arusaam riistvarast ja erinevatest kommunikatsiooniprotokollidest. 17 tunni jooksul testitakse sinu võimet ühendada serveripoolne loogika ja silmapaistev kasutajaliides ühtseks, toimivaks lahenduseks.'
+    }
+  ];
+
   return (
-    <section id='fields' className='py-20 bg-white'>
+    <section id="fields" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-center mb-12">
-                VALDKONNAD
-            </h2>
+          <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center">
+            VALDKONNAD
+          </h1>
         </div>
 
-        {/* Fields tab*/}
+        {/* Field Tabs */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {fields.map((field, index) => (
-                <Button
-                    key={index}
-                    variant={activeField === index ? "default" : "outline"}
-                    onClick={() => setActiveField(index)}
-                    className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                        activeField === index
-                        ? 'bg-[linear-gradient(90deg,hsl(0,84%,55%)_0%,hsl(0,100%,45%)_100%)] text-white shadow-lg'
-                        : 'border-2 border-[hsl(0,84%,55%)] text-[hsl(0,84%,55%)] hover:bg-[hsl(0,84%,55%)] hover:text-white'
-                    }`}
-                >
-                    <field.icon className="w-5 h-5 mr-2" />
-                    <span>{field.name}</span>
-                </Button>
-            ))}
-        </div>
-        
-        {/* Add this section to display the selected field description */}
-        <div className="mt-8 p-6 bg-gray-50 rounded-xl">
-            <h3 className="text-2xl font-bold mb-4 flex items-center">
-                {React.createElement(fields[activeField].icon, { className: "w-6 h-6 mr-2" })}
-                {fields[activeField].name}
-            </h3>
-            <p className="text-gray-700 leading-relaxed">
-                {fields[activeField].description}
-            </p>
+          {fields.map((field, index) => (
+            <Button
+              key={index}
+              variant={activeField === index ? "default" : "outline"}
+              onClick={() => setActiveField(index)}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                activeField === index 
+                  ? 'bg-[hsl(var(--enginaator-red))] text-white shadow-lg' 
+                  : 'border-2 border-[hsl(var(--enginaator-red))] text-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red))] hover:text-white'
+              }`}
+            >
+              <field.icon className="w-5 h-5" />
+              <span>{field.name}</span>
+            </Button>
+          ))}
         </div>
 
-        
+        {/* Active Field Content */}
+        <div className="max-w-4xl mx-auto">
+          <div className="field-card animate-fade-in">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="bg-gradient-accent rounded-full w-12 h-12 flex items-center justify-center">
+                {(() => {
+                  const IconComponent = fields[activeField].icon;
+                  return <IconComponent className="w-6 h-6 text-white" />;
+                })()}
+              </div>
+              <h3 className="text-2xl font-bold text-enginaator-black">
+                {fields[activeField].name}
+              </h3>
+            </div>
+            <p className="text-enginaator-gray leading-relaxed text-lg">
+              {fields[activeField].description}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Fields
+export default FieldsSection;
