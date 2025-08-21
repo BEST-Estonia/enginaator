@@ -4,6 +4,8 @@ import Hero from "./sections/Hero";
 import Sponsors from "./sections/Sponsors";
 import Introduction from "./sections/Introduction";
 import Fields from "./sections/Fields";
+import About from "./sections/About";
+import Gallery from "./sections/Gallery";
 
 export default function Home() {
   return (
@@ -13,6 +15,8 @@ export default function Home() {
       <Sponsors />
       <Introduction />
       <Fields />
+      <About />
+      <Gallery />
     </div>
   );
 }
