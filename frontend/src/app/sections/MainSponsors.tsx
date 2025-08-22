@@ -41,6 +41,9 @@ const MainSponsors = () => {
             description: 'ABB on elektrifitseerimise ja automatiseerimise valdkonna tehnoloogialiider, kes võimaldab luua säästvamat ning ressursitõhusamat tulevikku. Ühendades oma inseneriteadmised ja digilahendused, aitame tööstusettevõtetel saavutada maksimaalset tulemuslikkust olles samal ajal tõhusamad, tootlikumad ja keskkonnasõbralikumad. Just sellist lähenemist kirjeldame sõnadega: „Engineered to Outrun". Tuginedes enam kui 140-aastasele ajaloole, on ABB enam kui 110 000 töötajat pühendunud innovaatiliste lahenduste leidmisele tööstuse ümberkujundamiseks.'
         }
     ];
+
+    // Add state to track the current slide
+    const [currentSlide, setCurrentSlide] = useState(0);
   
   return (
     <section className='py-20 bg-gradient-subtle'>
@@ -55,63 +58,52 @@ const MainSponsors = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-          <Carousel 
-            className="w-full"
-            plugins={[
-              Autoplay({
-                delay: 3000,
-              }),
-            ]}
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-          >
-            <CarouselContent>
-              {sponsors.map((sponsor, index) => (
-                <CarouselItem key={sponsor.name}>
-                  <Card className="overflow-hidden border-none shadow-lg bg-card/50 backdrop-blur-sm">
-                    <CardContent className="p-8 md:p-12">
-                      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center text-center lg:text-left">
-                        <div className="flex-shrink-0">
-                          <div className="w-32 h-32 lg:w-40 lg:h-40 bg-white rounded-xl flex items-center justify-center shadow-lg p-4">
-                            <Image 
-                              src={sponsor.logo}
-                              alt={`${sponsor.name} logo`}
-                              className="object-contain max-w-full max-h-full"
-                            />
+              <Carousel 
+                className="w-full"
+                plugins={[
+                  Autoplay({
+                    delay: 3000,
+                  }),
+                ]}
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+              >
+                <CarouselContent>
+                  {sponsors.map((sponsor, index) => (
+                    <CarouselItem key={sponsor.name}>
+                      <Card className="overflow-hidden border-none shadow-lg bg-card/50 backdrop-blur-sm">
+                        <CardContent className="p-8 md:p-12">
+                          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center text-center lg:text-left">
+                            <div className="flex-shrink-0">
+                              <div className="w-32 h-32 lg:w-40 lg:h-40 bg-white rounded-xl flex items-center justify-center shadow-lg p-4">
+                                <Image 
+                                  src={sponsor.logo}
+                                  alt={`${sponsor.name} logo`}
+                                  className="object-contain max-w-full max-h-full"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                                {sponsor.name}
+                              </h3>
+                              <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
+                                {sponsor.description}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                            {sponsor.name}
-                          </h3>
-                          <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
-                            {sponsor.description}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-4 bg-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red-dark))] text-white border-none shadow-lg" />
-            <CarouselNext className="hidden md:flex -right-4 bg-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red-dark))] text-white border-none shadow-lg" />
-          </Carousel>
-          
-          <div className="flex justify-center mt-8 space-x-2">
-            {sponsors.map((sponsor, index) => (
-              <div 
-                key={index} 
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === 0 ? 'bg-[hsl(var(--enginaator-red))] w-4' : 'bg-muted-foreground/30'
-                }`}
-              ></div>
-            ))}
-          </div>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex -left-4 bg-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red-dark))] text-white border-none shadow-lg" />
+                <CarouselNext className="hidden md:flex -right-4 bg-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red-dark))] text-white border-none shadow-lg" />
+              </Carousel>
+            </div>
         </div>
-      </div>
     </section>
   )
 }
