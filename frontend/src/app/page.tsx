@@ -6,6 +6,7 @@ import Introduction from "./sections/Introduction";
 import Fields from "./sections/Fields";
 import About from "./sections/About";
 import Gallery from "./sections/Gallery";
+import MainSponsors from "./sections/MainSponsors";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <Fields />
       <About />
       <Gallery />
+      <MainSponsors />
     </div>
   );
 }
