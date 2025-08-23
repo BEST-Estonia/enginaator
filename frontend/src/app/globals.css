@@ -36,6 +36,10 @@
   .field-card {
     @apply bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-l-4 border-[hsl(var(--enginaator-red))];
   }
+
+  .team-card {
+    @apply bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-red-600;
+  }
   
   /* Add animate-fade-in */
   @keyframes fadeIn {
