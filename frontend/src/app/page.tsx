@@ -8,6 +8,7 @@ import About from "./sections/About";
 import Gallery from "./sections/Gallery";
 import MainSponsors from "./sections/MainSponsors";
 import ProjectTeam from "./sections/ProjectTeam";
+import Footer from "./sections/Footer";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <Gallery />
       <MainSponsors />
       <ProjectTeam />
+      <Footer />
     </div>
   );
 }
