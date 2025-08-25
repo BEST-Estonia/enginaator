@@ -6,6 +6,7 @@ import Introduction from "./sections/Introduction";
 import Fields from "./sections/Fields";
 import About from "./sections/About";
 import Gallery from "./sections/Gallery";
+import Faq from "./sections/Faq";
 import MainSponsors from "./sections/MainSponsors";
 import ProjectTeam from "./sections/ProjectTeam";
 import Footer from "./sections/Footer";
@@ -20,6 +21,7 @@ export default function Home() {
       <Fields />
       <About />
       <Gallery />
+      <Faq />
       <MainSponsors />
       <ProjectTeam />
       <Footer />
