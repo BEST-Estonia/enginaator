@@ -66,3 +66,8 @@
 .animate-scroll {
   animation: scroll 30s linear infinite;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Adjust this value based on your navbar height */
+}

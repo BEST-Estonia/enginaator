@@ -9,6 +9,8 @@ import Gallery from "./sections/Gallery";
 import MainSponsors from "./sections/MainSponsors";
 import ProjectTeam from "./sections/ProjectTeam";
 import Footer from "./sections/Footer";
+import RegisterForm from "./sections/RegisterForm";
+import RegistrationModalWrapper from "./components/RegistrationModalWrapper";
 
 export default function Home() {
   return (
@@ -23,6 +25,7 @@ export default function Home() {
       <MainSponsors />
       <ProjectTeam />
       <Footer />
+      <RegistrationModalWrapper />
     </div>
   );
 }

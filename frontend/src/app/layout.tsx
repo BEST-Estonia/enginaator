@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { ModalProvider } from './context/ModalContext';
+import { Toaster } from "react-hot-toast";
 
 
 const poppins = Poppins({
@@ -28,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${dmSans.variable} antialiased font-sans`}>
-        {children}
+        <ModalProvider>
+          {children}
+          <Toaster />
+        </ModalProvider>
       </body>
     </html>
   );
