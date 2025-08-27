@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { toast } from './hooks/use-toast';
+import { useToast } from './hooks/use-toast.tsx';
 import { cn } from '@/lib/utils';
 
 interface RegistrationModalProps {
@@ -30,9 +30,10 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
 
   const fields = ['Elektroonika', 'Mehaanika', 'Ehitus', 'IT'];
 
+  const { toast } = useToast();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     // Basic validation
     if (!formData.teamName || !formData.leaderName || !formData.leaderEmail || !formData.field) {
       toast({
@@ -42,13 +43,11 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
       });
       return;
     }
-
     // Success toast
     toast({
       title: "Edukalt saadetud!",
       description: "Tiim registreeritud edukalt!",
     });
-
     onClose();
   };
 
