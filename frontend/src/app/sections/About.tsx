@@ -23,7 +23,7 @@ const About = () => {
     <section>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center">
+            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">
                 ÜRITUSEST
             </h1>
             <p className="section-subheader">
