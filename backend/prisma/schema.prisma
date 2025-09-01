@@ -1,0 +1,39 @@
+generator client {
+    provider="prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url= env("DATABASE_URL")
+}
+
+model Team {
+    id          String       @id @default(cuid())
+  name        String       @unique @db.VarChar(100)
+  field       String       @db.VarChar(100)
+  leaderName  String       @db.VarChar(100)
+  leaderEmail String       @db.VarChar(255)
+  leaderPhone String?      @db.VarChar(20)
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @db.Timestamptz
+  members     TeamMember[]
+
+  // Indexes for better performance
+  @@index([field])
+  @@index([leaderEmail])
+  @@index([createdAt])
+  @@map("teams")
+}
+
+model TeamMember {
+  id     String  @id @default(cuid())
+  name   String  @db.VarChar(100)
+  age    String  @db.VarChar(20)
+  email  String? @db.VarChar(255)
+  phone  String? @db.VarChar(20)
+  teamId String
+  team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  @@index([email])
+  @@map("team_members")
+}
