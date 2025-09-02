@@ -35,7 +35,7 @@ const About = () => {
             {sections.map((section, index) => (
                 <div 
                 key={index} 
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all hover:scale-110 duration-300">
                     <div className="flex items-center space-x-4 mb-6">
                         <div className="bg-gradient-to-r from-[hsl(var(--enginaator-red))] to-[hsl(var(--enginaator-red-dark))] rounded-full w-12 h-12 flex items-center justify-center">
                             <section.icon className="w-6 h-6 text-white" />

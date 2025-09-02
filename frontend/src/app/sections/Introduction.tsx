@@ -7,7 +7,7 @@ const Introduction = () => {
         <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center">
           MIS ON ENGINAATOR?
         </h1>
-        <h2 className="font-light text-sm sm:text-base md:text-[15px] leading-7 sm:leading-8 md:leading-9 text-justify opacity-80">
+        <h2 className="font-light text-sm sm:text-base md:text-[15px] leading-7 sm:leading-8 md:leading-9 text-center opacity-80">
           Enginaator on üle-eestiline insenerivõistlus, mis kestab 4 päeva ning toimub TalTechis. Võistlus koosneb eel- ja finaalvoorust ning hõlmab nelja eri  valdkonda: elektroonika, mehaanika, ehitus ja IT, kus võistlevad 4-liikmelised meeskonnad. Võistluse eelvoor koosneb sprint-ülesandest, mis on lihtsam ja kiirem, ning stamina-ülesandest, mis on raskem ja aeganõudvam. Eelvoor vältab läbi öö ning kestab 17h. Igast valdkonnast pääsevad edasi finaalvooru neli parimat meeskonda ehk finaalis võistlevad kokku 16 tiimi, kes finaalis kõik ühiselt sama ülesannet lahendavad. Finaalvoor toimub häkaton formaadis, kus sponsorfirma püstitab võistlejatele lahendamiseks probleemi. Finaalvoor kestab samuti läbi öö, kokku 24h. Enginaator sai alguse 2018. aastal ning toimub juba seitsmendat korda. Võistlus on välja kujunenud rahvusvahelisest insenerivõistlusest EBEC. Projekti viivad läbi tudengiorganisatsiooni BEST-Estonia liikmed.
         </h2>
 
