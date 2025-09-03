@@ -46,7 +46,7 @@ const MainSponsors = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
   
   return (
-    <section className='py-20 bg-gradient-subtle'>
+    <section id='suurtoetajad' className='py-20 bg-gradient-subtle'>
         <div className="container mx-auto px-4">
             <div className="text-center mb-16">
                 <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">

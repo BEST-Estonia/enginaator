@@ -39,7 +39,7 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, [])
   return (
-    <div className='relative w-full h-full'>
+    <div id="hero" className='relative w-full h-full'>
 
       <div className="relative w-full h-[800px]">
         <Image 
