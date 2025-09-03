@@ -135,7 +135,7 @@ const Gallery = () => {
               <FaFacebook />
             </a>
             <a
-              href="https://instagram.com/enginaator"
+              href="https://www.instagram.com/enginaator.official/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-600 transition"
