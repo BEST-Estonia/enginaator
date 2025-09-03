@@ -117,7 +117,7 @@ function AccordionItem({
 
 export default function Faq() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 px-6 sm:px-10 md:px-16 lg:px-24 xl:px-32 [font-family:var(--font-poppins)]">
+    <section id='kkk' className="py-12 sm:py-16 md:py-20 px-6 sm:px-10 md:px-16 lg:px-24 xl:px-32 [font-family:var(--font-poppins)]">
       <div className="mx-auto max-w-3xl text-center mb-10 sm:mb-14">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Korduma Kippuvad Küsimused</h1>
         <p className="mt-3 text-sm sm:text-base opacity-70">Leiad vastused kõige sagedasematele küsimustele</p>
