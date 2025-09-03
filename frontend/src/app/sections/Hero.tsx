@@ -56,36 +56,37 @@ const Hero = () => {
         <h1 className='text-white text-4xl font-medium mt-4 mb-7'>
           17-20 APRILL 2025
         </h1>
-        <h2 className='text-white text-7xl font-bold drop-shadow-lg text-center'>
+        <h2 className='text-white text-xl sm:text-3xl md:text-5xl lg:text-7xl font-bold drop-shadow-lg text-center'>
           ÜLE-EESTILINE INSENERIVÕISTLUS
         </h2>
+
 
         {/*Countdown timer*/}
         <div className="flex justify-center gap-12 mt-16">
           <div className="flex flex-col items-center">
-            <span className="text-white text-6xl font-bold">{timeLeft.days}</span>
+            <span className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold">{timeLeft.days}</span>
             <span className="text-white text-sm uppercase mt-1">päeva</span>
           </div>
 
           <div className="flex flex-col items-center">
-            <span className="text-white text-6xl font-bold">{timeLeft.hours}</span>
+            <span className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold">{timeLeft.hours}</span>
             <span className="text-white text-sm uppercase mt-1">tundi</span>
           </div>
 
           <div className="flex flex-col items-center">
-            <span className="text-white text-6xl font-bold">{timeLeft.minutes}</span>
+            <span className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold">{timeLeft.minutes}</span>
             <span className="text-white text-sm uppercase mt-1">minutid</span>
           </div>
 
           <div className="flex flex-col items-center">
-            <span className="text-white text-6xl font-bold">{timeLeft.seconds}</span>
+            <span className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold">{timeLeft.seconds}</span>
             <span className="text-white text-sm uppercase mt-1">sekundit</span>
           </div>
         </div>
 
         {/* The red part at the end, which includes some information */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-          <div className="bg-red-700 rounded-full px-10 py-3 flex items-center justify-between w-[700px] max-w-[90%]">
+          <div className="bg-red-700 rounded-full px-10 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 w-[700px] max-w-[90%]">
             <div className="flex items-center gap-2 text-white">
               <FaCalendar className="text-xl" />
               <span>17-20. aprill 2026</span>
@@ -98,7 +99,7 @@ const Hero = () => {
             
             <div className="flex items-center gap-2 text-white">
               <IoPeopleSharp className="text-xl" />
-              <span>Insenerihuvilistele noored</span>
+              <span>Insenerihuvilistele noortele</span>
             </div>
             
             <div className="flex items-center gap-2 text-white">
