@@ -1,4 +1,4 @@
-import HomeDash from './HomeDash'
+import HomeDash from './AdminDashboard'
 
 export default function LoginPage() {
   return <HomeDash />
