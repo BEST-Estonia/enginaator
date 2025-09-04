@@ -7,6 +7,7 @@ import { FaHandshake } from "react-icons/fa6";
 import QuickActionSection from './QuickActionSection';
 import engikaLogo from '@/assets/enginaatorLogo.png';
 import Image from 'next/image';
+import { IoMdImages } from "react-icons/io";
 
 
 
@@ -245,7 +246,9 @@ const AdminDashboard = () => {
                     <p className="text-sm text-gray-500">Photos in gallery</p>
                   </div>
                   <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 text-xl">🖼️</span>
+                    <span className="text-purple-600 text-xl">
+                      <IoMdImages />
+                    </span>
                   </div>
                 </div>
               </div>
