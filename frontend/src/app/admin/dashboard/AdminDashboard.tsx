@@ -5,6 +5,8 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { FaPerson } from "react-icons/fa6";
 import { FaHandshake } from "react-icons/fa6";
 import QuickActionSection from './QuickActionSection';
+import engikaLogo from '@/assets/enginaatorLogo.png';
+import Image from 'next/image';
 
 
 
@@ -27,7 +29,9 @@ const AdminDashboard = () => {
         {/*Sidebar header*/}
         <div className="p-4 border-b border-gray-200 flex items-center space-x-2">
           <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
-            <span className="text-white text-sm font-bold">🛡️</span>
+            <span className="text-white text-sm font-bold">
+              <Image src={engikaLogo} alt='Enginaator Logo'/>
+            </span>
           </div>
           <span className="font-semibold text-gray-800">Admin</span>
         </div>
