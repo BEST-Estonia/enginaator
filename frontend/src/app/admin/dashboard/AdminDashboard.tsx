@@ -5,6 +5,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { FaPerson } from "react-icons/fa6";
 import { FaHandshake } from "react-icons/fa6";
 import QuickActionSection from './QuickActionSection';
+import HeroEditor from './HeroEditor';  // Add this import
 import engikaLogo from '@/assets/enginaatorLogo.png';
 import Image from 'next/image';
 import { IoMdImages } from "react-icons/io";
@@ -253,11 +254,26 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
+
+            {/* Quick Actions Section */}
+            <QuickActionSection setActiveSection={setActiveSection} />
             </div>
             )}
 
-            {/* Quick Actions Section - New Component Integrated */}
-            <QuickActionSection setActiveSection={setActiveSection} />
+            {/* Hero Section Editor */}
+            {activeSection === 'hero' && (
+              <HeroEditor setActiveSection={setActiveSection} />
+            )}
+
+            {/* Other Sections*/}
+            {activeSection !== 'dashboard' && activeSection !== 'hero' && (
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section
+                </h2>
+                <p className="text-gray-600">This section is under development. Coming soon!</p>
+              </div>
+            )}
           </main>
         </div>
       </div>
