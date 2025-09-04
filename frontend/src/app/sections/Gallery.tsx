@@ -22,6 +22,32 @@ const Gallery = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const closeModal = () => setViewImage(null);
+  const [sectionHeight, setSectionHeight] = useState('auto');
+
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [height, setHeight] = useState<'auto' | number>('auto');
+
+    useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    if (viewImage !== null) {
+        const currentHeight = section.getBoundingClientRect().height;
+        setHeight(currentHeight);
+
+        requestAnimationFrame(() => {
+        setHeight(window.innerHeight * 1.5);
+        });
+    } else {
+        const fullHeight = section.scrollHeight;
+        setHeight(fullHeight);
+
+        const timeout = setTimeout(() => setHeight('auto'), 700);
+        return () => clearTimeout(timeout);
+    }
+    }, [viewImage]);
+
+
 
   useEffect(() => {
     if (viewImage !== null) return;
@@ -61,7 +87,13 @@ const Gallery = () => {
   }, [viewImage, images.length]);
 
   return (
-    <section className='py-20 bg-background'>
+    <section
+    ref={sectionRef}
+    className="relative py-20 bg-background overflow-hidden transition-[height] duration-700 ease-in-out"
+    style={{
+        height: typeof height === 'number' ? `${height}px` : 'auto',
+    }}
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">
@@ -156,10 +188,10 @@ const Gallery = () => {
 
       {viewImage !== null && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-100 flex items-center justify-center p-4"
           onClick={closeModal}
         >
-          <div className="relative max-w-7xl max-h-[90vh] w-full flex items-center justify-center">
+          <div className="relative max-w-7xl max-h-[100%] w-full flex items-center justify-center">
             <button
               className="absolute top-4 right-4 z-10 bg-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red-dark))] text-white p-3 rounded-full shadow-lg"
               onClick={closeModal}
@@ -191,11 +223,15 @@ const Gallery = () => {
               className="relative w-full h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <Image
                 src={images[viewImage]}
                 alt={`Full view of gallery image ${viewImage + 1}`}
-                className="object-contain max-h-[90vh] max-w-full"
-              />
+                className="object-contain w-[80%] max-h-[80%]"
+            />
+            </div>
+
+
             </div>
           </div>
         </div>
