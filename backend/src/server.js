@@ -2,9 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
+const morgan = require('morgan');
+const routes = require('./routes/routes');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(helmet());
@@ -12,14 +14,12 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
+app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Import routes
-const teamRoutes = require('./routes/routes');
-
-// Use routes - THIS WAS MISSING!
-app.use('/api/teams', teamRoutes);
+// Routes
+app.use('/api', routes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {

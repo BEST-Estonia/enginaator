@@ -13,7 +13,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
     dateText: "17-20 APRILL 2025",
     mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS",
     eventDate: "April 17, 2026 00:00:00",
-    backgroundImage: "/assets/hero-img.jpg",
+    backgroundImage: "/assets/hero-img.jpg", // <- static path
     eventDateInfo: "17-20. aprill 2026",
     location: "TalTech",
     audience: "Insenerihuvilistele noortele",
@@ -28,9 +28,12 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
           <p className="text-gray-600">Customize the hero section</p>
         </div>
 
-        <button onClick={() => setActiveSection('dashboard')}>
-        ← Back to Dashboard
-      </button>
+        <button 
+          onClick={() => setActiveSection('dashboard')}
+          className="text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          ← Back to Dashboard
+        </button>
       </div>
 
       {/*Step 4: We'll add Live Preview Here*/}
@@ -109,7 +112,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
                 type='text'
                 value={heroData.mainTitle}
                 onChange={(e) => setHeroData({...heroData, mainTitle: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-red-500'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
                 placeholder='ÜLE-EESTILINE INSENERIVÕISTLUS'
               />
             </div>
@@ -169,15 +172,54 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
                 placeholder='4 päeva'
               />
             </div>
+
+            {/*Background Image Upload */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                Background Image
+              </label>
+              <div className="space-y-3">
+                {/*Current Image Display*/}
+                <div className="relative h-32 bg-gray-100 rounded-lg overflow-hidden">
+                  <img
+                    src={heroData.backgroundImage}
+                    alt='Current background'
+                    className='w-full h-full object-cover'
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://via.placeholder.com/600x300/gray/white?text=No+Image';
+                    }} 
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">Current Background</span>
+                  </div>
+                </div>
+
+                {/*File Upload */}
+                <input 
+                  type='file'
+                  accept='image/*'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      //Create preview URL
+                      const imageUrl = URL.createObjectURL(file);
+                      setHeroData({...heroData, backgroundImage: imageUrl})
+                    }
+                  }}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'  
+                />
+                <p className="text-sm text-gray-500">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+              </div>
+            </div>
           </div>
 
           {/*Save Button*/}
-          <div className="mt-6 flex justify-between item-center">
+          <div className="mt-6 flex justify-between items-center">
             <div>
               {/*Success message will go here*/}
             </div>
             <button
-              onClick={() => alert('Saving fucntionality will be added with backend')}
+              onClick={() => alert('Saving functionality will be added with backend!')}
               className='bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors'
             >
               Save Changes
