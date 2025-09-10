@@ -37,3 +37,46 @@ model TeamMember {
   @@index([email])
   @@map("team_members")
 }
+
+// NEW: Hero Section model for CMS
+model HeroSection {
+  id              String   @id @default(cuid())
+  dateText        String   @db.VarChar(100)
+  mainTitle       String   @db.VarChar(200)
+  eventDate       String   @db.VarChar(100)
+  backgroundImage String   @db.VarChar(500)
+  eventDateInfo   String   @db.VarChar(100)
+  location        String   @db.VarChar(100)
+  audience        String   @db.VarChar(200)
+  duration        String   @db.VarChar(50)
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  @@map("hero_sections")
+}
+
+// Future CMS models
+model Sponsor {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(100)
+  logo      String   @db.VarChar(500)
+  website   String?  @db.VarChar(300)
+  tier      String   @db.VarChar(20) // gold, silver, bronze
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([tier])
+  @@map("sponsors")
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String   @db.VarChar(500)
+  alt       String?  @db.VarChar(200)
+  caption   String?  @db.VarChar(300)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([createdAt])
+  @@map("gallery_images")
+}
