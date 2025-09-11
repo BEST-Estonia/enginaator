@@ -4,6 +4,7 @@ const helmet = require('helmet');
 require('dotenv').config();
 const morgan = require('morgan');
 const routes = require('./routes/routes');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -68,3 +69,5 @@ app.listen(PORT, () => {
   console.log(`Teams API: http://localhost:${PORT}/api/teams`);
   console.log(`Register: POST http://localhost:${PORT}/api/teams/register`);
 });
+
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
