@@ -1,33 +1,173 @@
 "use client"
 
-import React, {useState} from 'react';
-import { TbBackground } from 'react-icons/tb';
+import { useToast } from '@/app/components/hooks/use-toast';
+import React, {useState, useEffect} from 'react';
+import Hero from "@/app/sections/Hero";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface HeroEditorProps {
   setActiveSection: (section: string) => void;
 }
 
 const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
-
+  const {toast} = useToast();
   const [heroData, setHeroData] = useState({
-    dateText: "17-20 APRILL 2025",
-    mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS",
-    eventDate: "April 17, 2026 00:00:00",
-    backgroundImage: "/assets/hero-img.jpg", // <- static path
-    eventDateInfo: "17-20. aprill 2026",
-    location: "TalTech",
-    audience: "Insenerihuvilistele noortele",
-    duration: "4 päeva"
-  })
+    dateText: "",
+    mainTitle: "",
+    eventDate: "",
+    backgroundImage: "",
+    eventDateInfo: "",
+    location: "",
+    audience: "",
+    duration: ""
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [previewKey, setPreviewKey] = useState(Date.now()); // Force re-render of preview
+
+  // Fetch hero data on mount
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/api/hero`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          setHeroData(data.data);
+        } else {
+          throw new Error(data.error || "Failed to load data");
+        }
+      } catch (err) {
+        console.error("Error fetching hero data:", err);
+        toast({
+          title: "Error",
+          description: "Failed to load hero section data.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Save changes
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch(`${API_URL}/api/hero`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(heroData)
+      });
+      const result = await res.json();
+      if (result.success) {
+        toast({
+          title: "Success!",
+          description: "Hero section updated.",
+        });
+        // Force preview to refresh
+        setPreviewKey(Date.now());
+      } else {
+        throw new Error(result.error || "Unknown error");
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to update hero section.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image file is too large. Maximum size is 5MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Preview URL for immediate feedback (just for UI)
+    const previewUrl = URL.createObjectURL(file);
+    setHeroData(prev => ({...prev, backgroundImage: previewUrl }));
+    
+    try {
+      setIsSaving(true);
+      
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // Upload the image
+      const uploadRes = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type header; browser will set it with boundary for multipart/form-data
+      });
+      
+      if (!uploadRes.ok) {
+        const errorText = await uploadRes.text();
+        console.error("Upload error response:", errorText);
+        throw new Error(`Upload failed: ${uploadRes.status}`);
+      }
+      
+      const uploadResult = await uploadRes.json();
+      
+      if (uploadResult.success) {
+        // Log for debugging
+        console.log("Upload successful, received URL:", uploadResult.url);
+        
+        // Update hero data with the real URL from the server
+        setHeroData(prev => ({...prev, backgroundImage: uploadResult.url}));
+        
+        toast({
+          title: "Success!",
+          description: "Image uploaded successfully",
+        });
+      } else {
+        throw new Error(uploadResult.error || "Upload failed");
+      }
+    } catch (error) {
+      console.error("File upload error:", error);
+      
+      toast({
+        title: "Error",
+        description: "Failed to upload image. Please try again.",
+        variant: "destructive"
+      });
+      
+      // Revert to previous image URL on error
+      setHeroData(prev => ({
+        ...prev,
+        backgroundImage: prev.backgroundImage.startsWith('blob:') 
+          ? '' // Reset to empty to trigger fallback
+          : prev.backgroundImage
+      }));
+    } finally {
+      // Release object URL to avoid memory leaks
+      URL.revokeObjectURL(previewUrl);
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className='space-y-6'>
-      {/*Header section*/}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Edit Hero Section</h2>
           <p className="text-gray-600">Customize the hero section</p>
         </div>
-
         <button 
           onClick={() => setActiveSection('dashboard')}
           className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -36,198 +176,167 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
         </button>
       </div>
 
-      {/*Step 4: We'll add Live Preview Here*/}
-      <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
-        
-        {/*Mini Hero Preview */}
-        <div className="relative h-64 bg-gray-800 rounded-lg flex flex-col items-center justify-center text-white overflow-hidden">
-          {/*background simulation*/}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-75"></div>
-
-          {/*Content*/}
-          <div className="relative z-10 text-center space-y-4">
-            {/*Date text*/}
-            <h1 className="text-lg font-medium">{heroData.dateText}</h1>
-
-            {/*Main Title*/}
-            <div className="text-2xl font-bold">{heroData.mainTitle}</div>
-
-            {/*Mini Countdown Preview */}
-            <div className="flex gap-4">
-              <div className="text-center">
-                <div className="text-xl font-bold">223</div>
-                <div className="text-xs">PÄEVA</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold">22</div>
-                <div className="text-xs">TUNDI</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold">38</div>
-                <div className="text-xs">MINUTID</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold">56</div>
-                <div className="text-xs">SEKUNDIT</div>
-              </div>
-            </div>
-
-            {/*Bottom info bar preview*/}
-            <div className="bg-red-600 rounded-full px-4 py-2 text-xs flex justify-center gap-4">
-              <span>{heroData.eventDateInfo}</span>
-              <span>{heroData.location}</span>
-              <span>{heroData.audience}</span>
-              <span>{heroData.duration}</span>
+      {isLoading ? (
+        <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 text-center">
+          <p className="text-gray-500">Loading hero section data...</p>
+        </div>
+      ) : (
+        <>
+          <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
+            <div className="overflow-hidden rounded-lg border border-gray-100" style={{ height: "800px", position: "relative" }}>
+              <Hero key={previewKey} {...heroData} />
             </div>
           </div>
-        </div>
 
-      </div>
-        {/*Edit form*/}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Content</h3>
-
-          <div className="space-y-4">
-            {/*Date Text Input*/}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Date Display Text
-              </label>
-              <input 
-                type='text'
-                value={heroData.dateText}
-                onChange={(e) => setHeroData({...heroData, dateText: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
-                placeholder='17-20 APRILL 2025'
-              />
-            </div>
-
-            {/*Main Title Input*/}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Main Title
-              </label>
-              <input
-                type='text'
-                value={heroData.mainTitle}
-                onChange={(e) => setHeroData({...heroData, mainTitle: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
-                placeholder='ÜLE-EESTILINE INSENERIVÕISTLUS'
-              />
-            </div>
-
-            {/*Event Data Info Input*/}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Event Date Info (Bottom Bar)
-              </label>
-              <input
-                type='text'
-                value={heroData.eventDateInfo}
-                onChange={(e) => setHeroData({...heroData, eventDateInfo: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-red-500'
-                placeholder='17-20. aprill 2026'
-              />
-            </div>
-
-            {/*Location Input*/}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Event Location
-              </label>
-              <input 
-                type='text'
-                value={heroData.location}
-                onChange={(e) => setHeroData({...heroData, location: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
-                placeholder='TalTech'
-                />
-            </div>
-
-            {/*TalTech Audience Input*/}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Target Audience
-              </label>
-              <input
-                type='text'
-                value={heroData.audience}
-                onChange={(e) => setHeroData({...heroData, audience: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
-                placeholder='Insenerihuvilistele noortele'
-              />
-            </div>
-
-            {/* Duration Input */}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Event Duration
-              </label>
-              <input
-                type='text'
-                value={heroData.duration}
-                onChange={(e) => setHeroData({...heroData, duration: e.target.value})}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
-                placeholder='4 päeva'
-              />
-            </div>
-
-            {/*Background Image Upload */}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Background Image
-              </label>
-              <div className="space-y-3">
-                {/*Current Image Display*/}
-                <div className="relative h-32 bg-gray-100 rounded-lg overflow-hidden">
-                  <img
-                    src={heroData.backgroundImage}
-                    alt='Current background'
-                    className='w-full h-full object-cover'
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://via.placeholder.com/600x300/gray/white?text=No+Image';
-                    }} 
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">Current Background</span>
-                  </div>
-                </div>
-
-                {/*File Upload */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Content</h3>
+            <div className="space-y-4">
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Date Display Text
+                </label>
                 <input 
-                  type='file'
-                  accept='image/*'
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      //Create preview URL
-                      const imageUrl = URL.createObjectURL(file);
-                      setHeroData({...heroData, backgroundImage: imageUrl})
-                    }
-                  }}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'  
+                  type='text'
+                  value={heroData.dateText}
+                  onChange={(e) => setHeroData({...heroData, dateText: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='17-20 APRILL 2025'
                 />
-                <p className="text-sm text-gray-500">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Main Title
+                </label>
+                <input
+                  type='text'
+                  value={heroData.mainTitle}
+                  onChange={(e) => setHeroData({...heroData, mainTitle: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='ÜLE-EESTILINE INSENERIVÕISTLUS'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Event Date Info (Bottom Bar)
+                </label>
+                <input
+                  type='text'
+                  value={heroData.eventDateInfo}
+                  onChange={(e) => setHeroData({...heroData, eventDateInfo: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-red-500'
+                  placeholder='17-20. aprill 2026'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Event Location
+                </label>
+                <input 
+                  type='text'
+                  value={heroData.location}
+                  onChange={(e) => setHeroData({...heroData, location: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='TalTech'
+                  />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Target Audience
+                </label>
+                <input
+                  type='text'
+                  value={heroData.audience}
+                  onChange={(e) => setHeroData({...heroData, audience: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='Insenerihuvilistele noortele'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Event Duration
+                </label>
+                <input
+                  type='text'
+                  value={heroData.duration}
+                  onChange={(e) => setHeroData({...heroData, duration: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='4 päeva'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Event Countdown Date
+                </label>
+                <input
+                  type='text'
+                  value={heroData.eventDate}
+                  onChange={(e) => setHeroData({...heroData, eventDate: e.target.value})}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'
+                  placeholder='April 17, 2026 00:00:00'
+                />
+                <p className="text-xs text-gray-500 mt-1">Format: "Month Day, Year HH:MM:SS"</p>
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Background Image
+                </label>
+                <div className="space-y-3">
+                  {/* Custom styled file input */}
+                  <div className="relative">
+                    <label 
+                      htmlFor="background-image-upload" 
+                      className="flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors group"
+                    >
+                      <span className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-2 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-gray-600 group-hover:text-gray-700">
+                          {heroData.backgroundImage ? 'Change Background Image' : 'Select Background Image'}
+                        </span>
+                      </span>
+                    </label>
+                    <input 
+                      id="background-image-upload"
+                      type='file'
+                      accept='image/*'
+                      onChange={handleFileChange}
+                      className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+                    />
+                  </div>
+                  
+                  {/* File name display - shows when a file is selected */}
+                  {heroData.backgroundImage && (
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-sm text-gray-600 truncate">
+                        {heroData.backgroundImage.split('/').pop() || 'Image selected'}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <p className="text-sm text-gray-500 mt-1">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/*Save Button*/}
-          <div className="mt-6 flex justify-between items-center">
-            <div>
-              {/*Success message will go here*/}
+            <div className="mt-6 flex justify-between items-center">
+              <div>
+                {isSaving && <span className="text-gray-500">Saving changes...</span>}
+              </div>
+              <button
+                onClick={handleSaveChanges}
+                disabled={isSaving}
+                className={`bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                {isSaving ? 'Saving...' : 'Save Changes'}
+              </button>
             </div>
-            <button
-              onClick={() => alert('Saving functionality will be added with backend!')}
-              className='bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors'
-            >
-              Save Changes
-            </button>
           </div>
-        </div>
-
-      
+        </>
+      )}
     </div>
   );
 };
