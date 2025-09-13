@@ -98,11 +98,10 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       return;
     }
 
-    // Preview URL for immediate feedback
+    // Preview URL for immediate feedback (just for UI)
     const previewUrl = URL.createObjectURL(file);
-    setHeroData({...heroData, backgroundImage: previewUrl });
-    setPreviewKey(Date.now()); // Update preview with new image
-
+    setHeroData(prev => ({...prev, backgroundImage: previewUrl }));
+    
     try {
       setIsSaving(true);
       
@@ -113,15 +112,24 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       // Upload the image
       const uploadRes = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        // Don't set Content-Type header; browser will set it with boundary for multipart/form-data
       });
+      
+      if (!uploadRes.ok) {
+        const errorText = await uploadRes.text();
+        console.error("Upload error response:", errorText);
+        throw new Error(`Upload failed: ${uploadRes.status}`);
+      }
       
       const uploadResult = await uploadRes.json();
       
       if (uploadResult.success) {
+        // Log for debugging
+        console.log("Upload successful, received URL:", uploadResult.url);
+        
         // Update hero data with the real URL from the server
         setHeroData(prev => ({...prev, backgroundImage: uploadResult.url}));
-        setPreviewKey(Date.now()); // Update preview again with server URL
         
         toast({
           title: "Success!",
@@ -131,6 +139,8 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
         throw new Error(uploadResult.error || "Upload failed");
       }
     } catch (error) {
+      console.error("File upload error:", error);
+      
       toast({
         title: "Error",
         description: "Failed to upload image. Please try again.",
@@ -140,12 +150,13 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       // Revert to previous image URL on error
       setHeroData(prev => ({
         ...prev,
-        backgroundImage: prev.backgroundImage.startsWith('blob:')
+        backgroundImage: prev.backgroundImage.startsWith('blob:') 
           ? '' // Reset to empty to trigger fallback
           : prev.backgroundImage
       }));
-      setPreviewKey(Date.now());
     } finally {
+      // Release object URL to avoid memory leaks
+      URL.revokeObjectURL(previewUrl);
       setIsSaving(false);
     }
   };
@@ -271,26 +282,43 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
                   Background Image
                 </label>
                 <div className="space-y-3">
-                  <div className="relative h-32 bg-gray-100 rounded-lg overflow-hidden">
-                    <img
-                      src={heroData.backgroundImage || '/assets/hero-img.jpg'}
-                      alt='Current background'
-                      className='w-full h-full object-cover'
-                      onError={(e) => {
-                        e.currentTarget.src = '/assets/hero-img.jpg';
-                      }} 
+                  {/* Custom styled file input */}
+                  <div className="relative">
+                    <label 
+                      htmlFor="background-image-upload" 
+                      className="flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors group"
+                    >
+                      <span className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-2 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-gray-600 group-hover:text-gray-700">
+                          {heroData.backgroundImage ? 'Change Background Image' : 'Select Background Image'}
+                        </span>
+                      </span>
+                    </label>
+                    <input 
+                      id="background-image-upload"
+                      type='file'
+                      accept='image/*'
+                      onChange={handleFileChange}
+                      className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">Current Background</span>
-                    </div>
                   </div>
-                  <input 
-                    type='file'
-                    accept='image/*'
-                    onChange={handleFileChange}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500'  
-                  />
-                  <p className="text-sm text-gray-500">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+                  
+                  {/* File name display - shows when a file is selected */}
+                  {heroData.backgroundImage && (
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-sm text-gray-600 truncate">
+                        {heroData.backgroundImage.split('/').pop() || 'Image selected'}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <p className="text-sm text-gray-500 mt-1">Upload JPG, PNG, or WebP. Max size: 5MB</p>
                 </div>
               </div>
             </div>
