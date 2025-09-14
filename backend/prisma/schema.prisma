@@ -59,9 +59,9 @@ model HeroSection {
 model Sponsor {
   id        String   @id @default(cuid())
   name      String   @db.VarChar(100)
-  logo      String   @db.VarChar(500)
-  website   String?  @db.VarChar(300)
-  tier      String   @db.VarChar(20) // gold, silver, bronze
+  imageUrl  String   @db.VarChar(500)  // Changed from logo to imageUrl for consistency
+  website   String?  @db.VarChar(1000)
+  tier      String?  @db.VarChar(20) // Made optional
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
 

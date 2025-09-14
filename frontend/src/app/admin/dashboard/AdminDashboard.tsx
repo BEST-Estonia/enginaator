@@ -1,14 +1,16 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaPerson } from "react-icons/fa6";
 import { FaHandshake } from "react-icons/fa6";
 import QuickActionSection from './QuickActionSection';
-import HeroEditor from './HeroEditor';  // Add this import
+import HeroEditor from './HeroEditor';
+import SponsorEditor from './SponsorEditor';  // Add this import
 import engikaLogo from '@/assets/enginaatorLogo.png';
 import Image from 'next/image';
 import { IoMdImages } from "react-icons/io";
+import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 
 
 
@@ -22,6 +24,26 @@ const AdminDashboard = () => {
     activeSponsors: 0,
     galleryImages: 0
   });
+
+  // Fetch stats when dashboard is loaded
+  useEffect(() => {
+    const loadStats = async () => {
+      // Example: Fetch sponsor count
+      try {
+        const sponsors = await fetchSponsors();
+        setStats(prev => ({
+          ...prev,
+          activeSponsors: sponsors.length
+        }));
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+
+    if (activeSection === 'dashboard') {
+      loadStats();
+    }
+  }, [activeSection]);
 
   return (
     <div className='min-h-screen bg-gray-50 flex'>
@@ -265,8 +287,15 @@ const AdminDashboard = () => {
               <HeroEditor setActiveSection={setActiveSection} />
             )}
 
+            {/* Sponsor Section Editor */}
+            {activeSection === 'sponsors' && (
+              <SponsorEditor setActiveSection={setActiveSection} />
+            )}
+
             {/* Other Sections*/}
-            {activeSection !== 'dashboard' && activeSection !== 'hero' && (
+            {activeSection !== 'dashboard' && 
+             activeSection !== 'hero' && 
+             activeSection !== 'sponsors' && (
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
                   {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section
