@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const teamController = require('../controllers/teamController');
 const { getHeroSection, updateHeroSection } = require('../controllers/heroController');
 const { uploadImage } = require('../controllers/uploadController');
+const sponsorController = require('../controllers/sponsorController');
+
+// Configure multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // Team routes (with /teams prefix)
 router.post('/teams/register', teamController.registerTeam);
@@ -15,5 +31,10 @@ router.put('/hero', updateHeroSection);
 
 // Upload routes
 router.post('/upload', uploadImage);
+
+// Sponsor routes
+router.get('/sponsors', sponsorController.getAllSponsors);
+router.post('/sponsors', upload.single('image'), sponsorController.createSponsor);
+router.delete('/sponsors/:id', sponsorController.deleteSponsor);
 
 module.exports = router;
