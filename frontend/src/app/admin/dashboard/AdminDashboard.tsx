@@ -11,6 +11,7 @@ import engikaLogo from '@/assets/enginaatorLogo.png';
 import Image from 'next/image';
 import { IoMdImages } from "react-icons/io";
 import { fetchSponsors } from '@/services/sponsorService';  // Add this import
+import IntroductionEditor from './IntroductionEditor';
 
 
 
@@ -292,9 +293,15 @@ const AdminDashboard = () => {
               <SponsorEditor setActiveSection={setActiveSection} />
             )}
 
+            {/* Introduction/About Section Editor */}
+            {activeSection === 'about' && (
+              <IntroductionEditor setActiveSection={setActiveSection} />
+            )}
+
             {/* Other Sections*/}
             {activeSection !== 'dashboard' && 
-             activeSection !== 'hero' && 
+             activeSection !== 'hero' &&
+             activeSection !== 'about' && 
              activeSection !== 'sponsors' && (
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
