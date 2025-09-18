@@ -3,23 +3,35 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card } from '@/app/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/app/components/ui/carousel';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import image1 from '@/assets/1.jpg';
-import image2 from '@/assets/2.jpg';
-import image3 from '@/assets/3.jpg';
-import image4 from '@/assets/4.jpg';
-import image5 from '@/assets/5.jpg';
-import image6 from '@/assets/6.png';
-import image7 from '@/assets/7.jpeg';
 import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { fetchGalleryImages, GalleryImage } from '@/services/galleryService';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const Gallery = () => {
-  const images = [
-    image1, image2, image3, image4, image5, image6, image7
-  ];
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [viewImage, setViewImage] = useState<null | number>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    loadImages();
+  }, []);
+
+  const loadImages = async () => {
+    try {
+      const data = await fetchGalleryImages();
+      setImages(data);
+    } catch (error) {
+      console.error('Error loading gallery:', error);
+      setError('Failed to load gallery images');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const closeModal = () => setViewImage(null);
   const [sectionHeight, setSectionHeight] = useState('auto');
@@ -27,7 +39,7 @@ const Gallery = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [height, setHeight] = useState<'auto' | number>('auto');
 
-    useEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
@@ -45,16 +57,14 @@ const Gallery = () => {
         const timeout = setTimeout(() => setHeight('auto'), 700);
         return () => clearTimeout(timeout);
     }
-    }, [viewImage]);
-
-
+  }, [viewImage]);
 
   useEffect(() => {
     if (viewImage !== null) return;
 
     const interval = setInterval(() => {
       const carousel = carouselRef.current;
-      if (!carousel) return;
+      if (!carousel || images.length === 0) return;
 
       const scrollAmount = carousel.offsetWidth;
       const maxScrollLeft = carousel.scrollWidth - scrollAmount;
@@ -67,11 +77,11 @@ const Gallery = () => {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [viewImage]);
+  }, [viewImage, images.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (viewImage === null) return;
+      if (viewImage === null || images.length === 0) return;
 
       if (e.key === 'Escape') {
         closeModal();
@@ -85,6 +95,66 @@ const Gallery = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [viewImage, images.length]);
+
+  if (loading) {
+    return (
+      <section className="relative py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">
+              GALERII
+            </h1>
+            <p className="section-subheader">
+              Pilte eelmistest Enginaator võistlustest
+            </p>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-gray-500">Loading gallery images...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">
+              GALERII
+            </h1>
+            <p className="section-subheader">
+              Pilte eelmistest Enginaator võistlustest
+            </p>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (images.length === 0) {
+    return (
+      <section className="relative py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center [font-family:var(--font-poppins)]">
+              GALERII
+            </h1>
+            <p className="section-subheader">
+              Pilte eelmistest Enginaator võistlustest
+            </p>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-gray-500">No gallery images available yet.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -112,7 +182,7 @@ const Gallery = () => {
             >
               {images.map((image, index) => (
                 <CarouselItem
-                  key={index}
+                  key={image.id}
                   className="pl-4 md:basis-1/2 lg:basis-1/3"
                 >
                   <Card
@@ -121,9 +191,12 @@ const Gallery = () => {
                   >
                     <div className="aspect-video overflow-hidden">
                       <Image
-                        src={image}
-                        alt="Image from competition"
+                        src={`${API_URL}${image.url}`}
+                        alt={image.alt || "Gallery image"}
+                        width={400}
+                        height={300}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        unoptimized
                       />
                     </div>
                   </Card>
@@ -225,13 +298,14 @@ const Gallery = () => {
             >
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
             <Image
-                src={images[viewImage]}
-                alt={`Full view of gallery image ${viewImage + 1}`}
+                src={`${API_URL}${images[viewImage].url}`}
+                alt={images[viewImage].alt || `Gallery image ${viewImage + 1}`}
+                width={800}
+                height={600}
                 className="object-contain w-[80%] max-h-[80%]"
+                unoptimized
             />
             </div>
-
-
             </div>
           </div>
         </div>
