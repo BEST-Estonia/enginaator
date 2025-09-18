@@ -7,6 +7,8 @@ const { getHeroSection, updateHeroSection } = require('../controllers/heroContro
 const { uploadImage } = require('../controllers/uploadController');
 const sponsorController = require('../controllers/sponsorController');
 const introductionController = require('../controllers/introductionController');
+const galleryController = require('../controllers/galleryController');
+
 
 // Configure multer storage
 const storage = multer.diskStorage({
@@ -43,5 +45,10 @@ router.delete('/sponsors/:id', sponsorController.deleteSponsor);
 router.get('/introduction', introductionController.getIntroduction);
 router.put('/introduction', introductionController.updateIntroduction);
 router.post('/introduction/default', introductionController.createDefaultIntroduction);
+
+//Gallery routes
+router.get('/gallery', galleryController.getAllGalleryImages);
+router.post('/gallery', galleryController.createImage);
+router.delete('/gallery/:id', galleryController.deleteGalleryImage);
 
 module.exports = router;
