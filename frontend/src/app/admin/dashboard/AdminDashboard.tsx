@@ -13,6 +13,7 @@ import { IoMdImages } from "react-icons/io";
 import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
+import AboutEditor from './AboutEditor';
 
 
 
@@ -304,11 +305,17 @@ const AdminDashboard = () => {
               <GalleryEditor setActiveSection={setActiveSection} />
             )}
 
+            {/* About Section Editor */}
+            {activeSection === 'events' && (
+              <AboutEditor setActiveSection={setActiveSection} />
+            )}
+
             {/* Other Sections*/}
             {activeSection !== 'dashboard' && 
              activeSection !== 'hero' &&
              activeSection !== 'about' &&
-             activeSection !== 'gallery' && 
+             activeSection !== 'gallery' &&
+             activeSection !== 'events' &&  
              activeSection !== 'sponsors' && (
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
