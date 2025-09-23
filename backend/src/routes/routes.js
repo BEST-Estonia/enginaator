@@ -8,6 +8,7 @@ const { uploadImage } = require('../controllers/uploadController');
 const sponsorController = require('../controllers/sponsorController');
 const introductionController = require('../controllers/introductionController');
 const galleryController = require('../controllers/galleryController');
+const aboutController = require('../controllers/aboutController');
 
 
 // Configure multer storage
@@ -50,5 +51,10 @@ router.post('/introduction/default', introductionController.createDefaultIntrodu
 router.get('/gallery', galleryController.getAllGalleryImages);
 router.post('/gallery', galleryController.createImage);
 router.delete('/gallery/:id', galleryController.deleteGalleryImage);
+
+//About Section routes
+router.get('/aboutSection', aboutController.getAbout);
+router.put('/aboutSection', aboutController.updateAbout);
+router.post('/aboutSection', aboutController.createDefaultAbout);
 
 module.exports = router;
