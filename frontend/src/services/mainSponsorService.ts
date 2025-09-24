@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface MainSponsor {
@@ -46,4 +48,28 @@ export async function deleteMainSponsor(id: string): Promise<{ message: string }
   });
   if (!response.ok) throw new Error('Failed to delete main sponsor');
   return response.json();
+}
+
+export async function createMainSponsorWithImage(
+  sponsorName: string,
+  sponsorText: string,
+  image: File,
+  website?: string
+): Promise<MainSponsor | null> {
+  try {
+    const formData = new FormData();
+    formData.append('sponsorName', sponsorName);
+    formData.append('sponsorText', sponsorText);
+    formData.append('image', image);
+    if (website) formData.append('website', website);
+
+    const response = await axios.post(`${API_URL}/mainSponsors`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating main sponsor:', error);
+    return null;
+  }
 }

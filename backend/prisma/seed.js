@@ -59,6 +59,42 @@ async function main() {
       { url: "/assets/7.jpeg", alt: "Enginaator Gallery 7", caption: "Võistluse hetk 7" }
     ]
   });
+
+  // Seed Main Sponsors
+  await prisma.mainSponsor.createMany({
+    data: [
+      {
+        sponsorName: "ETS NORD",
+        sponsorText: "ETS NORD on üks Põhja-Euroopa juhtivaid ventilatsioonilahenduste pakkujaid, tegutsedes edukalt juba 26 aastat. Toodame ja arendame ventilatsiooniseadmeid, mis tagavad puhta ja tervisliku sisekliima ning parema enesetunde siseruumides viibijatele. Meie 500-liikmeline professionaalne meeskond tegutseb neljas riigis, pakkudes tuge kogu projekti vältel – alates planeerimisest kuni paigalduse ja hoolduseni. Keskendume klientide vajadustele ning keskkonnasäästlikele ja jätkusuutlikele lahendustele.",
+        imageUrl: "/uploads/etsnord.png",
+        website: "https://etsnord.ee"
+      },
+      {
+        sponsorName: "Stoneridge",
+        sponsorText: "Stoneridge Electronics AS on globaalne elektroonikatootja, kes pakub innovatiivseid lahendusi auto- ja kaubaveo tööstusharudele. Ettevõtte tootevalik hõlmab nutikaid sõidukisüsteeme, mis tagavad turvalisuse, mugavuse ja tõhususe. Stoneridge\'i tehniline osakond on võimeline looma kohandatud lahendusi vastavalt klientide vajadustele ning ettevõtte tugevus seisneb tehnoloogiliste uuenduste ja kvaliteetsete toodete väljatöötamises. Ettevõte on pühendunud ka jätkusuutlikkusele, kasutades loodussõbralikke tootmisprotsesse ja toetades ühiskonna sotsiaalseid ja keskkonnaalaseid algatusi. Stoneridge\'i eesmärk on olla juhtiv elektroonikalahenduste pakkuja transporditööstuses.",
+        imageUrl: "/uploads/stoneridge.png",
+        website: "https://stoneridge.com"
+      },
+      {
+        sponsorName: "HexTech",
+        sponsorText: "HexTech on Eesti tudengite kaitsetööstuse start-up, mis on pühendunud droonituvastuse võimekuse loomisele nii tsiviil- kui ka militaarsektoris. Juba 2026 aasta lõpuks katab HexTech Tallinna linna enda droonituvastuse sensorvõrgustikuga, millega tagatakse ohutum õhuruum kõigile lennureisijatele ning esmane kaitse kiht Eesti kriitilisele infrastruktuurile. Lisaks meie tsiviilsensoritele on arenduses erinevaid militaarlahendusi, millega loome võimekuse tuvastada raadio- ja helilainete abil ka FPV ehk kamikaze droone ning venelaste militaardroone. Enda lahenduste arendamisel teeme pidevat koostööd Ukraina ning Eesti jõustruktuuridega.",
+        imageUrl: "/uploads/hextech.png",
+        website: "https://hextech.ee"
+      },
+      {
+        sponsorName: "Ruukki",
+        sponsorText: "Ruukki Construction tarnib terasepõhiseid ehitustooteid ja -teenuseid katuste ning seinte kestlikuks ehitamiseks. Ruukki eesmärk on pakkuda jätkusuutlike ehitiste rajamiseks terviklikke terasepõhiseid katuse- ja ehitustoodete lahendusi, mis hõlmavad ka projekteerimist ja tehnilist tuge. Meie heaks töötab pea 1350 inimest ning meil on 14 spetsialiseerunud tehast. Tugev kohalolu kümnes Euroopa riigis võimaldab pakkuda kohalikele klientidele meie peamisi kaubamärke, milleks on Ruukki ja Plannja. Oleme osa SSAB-st ning meil on pikk terasetöötlemise ja ehitustööstuse kogemus.",
+        imageUrl: "/uploads/ruukki.webp",
+        website: "https://ruukki.ee"
+      },
+      {
+        sponsorName: "ABB",
+        sponsorText: 'ABB on elektrifitseerimise ja automatiseerimise valdkonna tehnoloogialiider, kes võimaldab luua säästvamat ning ressursitõhusamat tulevikku. Ühendades oma inseneriteadmised ja digilahendused, aitame tööstusettevõtetel saavutada maksimaalset tulemuslikkust olles samal ajal tõhusamad, tootlikumad ja keskkonnasõbralikumad. Just sellist lähenemist kirjeldame sõnadega: „Engineered to Outrun". Tuginedes enam kui 140-aastasele ajaloole, on ABB enam kui 110 000 töötajat pühendunud innovaatiliste lahenduste leidmisele tööstuse ümberkujundamiseks.',
+        imageUrl: "/uploads/abb.png",
+        website: "https://abb.com"
+      }
+    ]
+  });
 }
 
 main()

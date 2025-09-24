@@ -60,7 +60,7 @@ router.post('/aboutSection', aboutController.createDefaultAbout);
 
 //Main Sponsors routes
 router.get('/mainSponsors', mainSponsorController.getMainSponsors);
-router.post('/mainSponsors', mainSponsorController.createMainSponsor);
+router.post('/mainSponsors', upload.single('image'), mainSponsorController.createMainSponsor);
 router.put('/mainSponsors/:id', mainSponsorController.updateMainSponsor);
 router.delete('/mainSponsors/:id', mainSponsorController.deleteMainSponsor);
 

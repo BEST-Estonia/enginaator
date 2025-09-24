@@ -14,10 +14,30 @@ exports.getMainSponsors = async (req, res) => {
 //Create a new main sponsor
 exports.createMainSponsor = async (req, res) => {
     try {
-        const { sponsorName, sponsorText, imageUrl, website } = req.body;
+        // Check if an image file was uploaded
+        if (!req.file) {
+            return res.status(400).json({ error: 'Sponsor image is required' });
+        }
+
+        // Get the image URL and sponsor info from the request
+        const imageUrl = `/uploads/${req.file.filename}`;
+        const { sponsorName, sponsorText, website } = req.body;
+
+        // Validate required fields
+        if (!sponsorName) {
+            return res.status(400).json({ error: 'Sponsor name is required' });
+        }
+
+        // Create the sponsor in the database
         const sponsor = await prisma.mainSponsor.create({
-            data: {sponsorName, sponsorText, imageUrl, website}
+            data: {
+                sponsorName,
+                sponsorText,
+                imageUrl,
+                website: website || null
+            },
         });
+
         res.status(201).json(sponsor);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create main sponsor' });

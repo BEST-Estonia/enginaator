@@ -3,10 +3,14 @@ import React, { useEffect, useState } from "react";
 import {
   getMainSponsors,
   createMainSponsor,
+  createMainSponsorWithImage,
   updateMainSponsor,
   deleteMainSponsor,
   MainSponsor,
 } from "@/services/mainSponsorService";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const IMAGE_BASE_URL = BACKEND_URL.replace('/api', '');
 
 interface MainSponsorEditorProps {
   setActiveSection: (section: string) => void;
@@ -22,6 +26,7 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
     website: "",
   });
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   // Fetch sponsors on mount
   useEffect(() => {
@@ -43,10 +48,20 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
       setSponsors(sponsors.map(s => (s.id === editingId ? updated : s)));
       setEditingId(null);
     } else {
-      const created = await createMainSponsor(form);
-      setSponsors([...sponsors, created]);
+      if (!selectedImage) {
+        // Show error: image required
+        return;
+      }
+      const created = await createMainSponsorWithImage(
+        form.sponsorName,
+        form.sponsorText,
+        selectedImage,
+        form.website
+      );
+      if (created) setSponsors([...sponsors, created]);
     }
     setForm({ sponsorName: "", sponsorText: "", imageUrl: "", website: "" });
+    setSelectedImage(null);
   };
 
   // Edit sponsor
@@ -86,18 +101,18 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
           className="border p-2 rounded w-full"
           required
         />
-        <input
-          name="imageUrl"
-          value={form.imageUrl}
-          onChange={handleChange}
-          placeholder="Image URL"
-          className="border p-2 rounded w-full"
-        />
+    
         <input
           name="website"
           value={form.website}
           onChange={handleChange}
           placeholder="Website (optional)"
+          className="border p-2 rounded w-full"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e => setSelectedImage(e.target.files?.[0] || null)}
           className="border p-2 rounded w-full"
         />
         <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded">
@@ -125,7 +140,11 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
               <div className="font-bold">{sponsor.sponsorName}</div>
               <div>{sponsor.sponsorText}</div>
               {sponsor.imageUrl && (
-                <img src={sponsor.imageUrl} alt={sponsor.sponsorName} className="h-16 w-auto rounded" />
+                <img
+                  src={IMAGE_BASE_URL + sponsor.imageUrl}
+                  alt={sponsor.sponsorName}
+                  className="h-24 w-auto max-w-xs rounded object-contain mx-auto"
+                />
               )}
               {sponsor.website && (
                 <a href={sponsor.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
