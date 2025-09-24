@@ -107,3 +107,13 @@ model Feature {
   introductionId Int
   introduction  Introduction @relation(fields: [introductionId], references: [id])
 }
+
+model MainSponsor {
+  id           String   @id @default(cuid())
+  sponsorName  String
+  sponsorText  String 
+  imageUrl     String   @db.VarChar(500)
+  website   String?  @db.VarChar(1000)
+  createdAt    DateTime @default(now()) @db.Timestamptz
+  updatedAt    DateTime @updatedAt @db.Timestamptz
+}

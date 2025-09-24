@@ -7,6 +7,7 @@ import { FaHandshake } from "react-icons/fa6";
 import QuickActionSection from './QuickActionSection';
 import HeroEditor from './HeroEditor';
 import SponsorEditor from './SponsorEditor';  // Add this import
+import MainSponsorEditor from './MainSponsorEditor'; // Add this import
 import engikaLogo from '@/assets/enginaatorLogo.png';
 import Image from 'next/image';
 import { IoMdImages } from "react-icons/io";
@@ -173,6 +174,17 @@ const AdminDashboard = () => {
                 >
                   <span className="font-medium">Gallery</span>
                 </button>
+
+                {/* Main Sponsors button */}
+                <button 
+                  onClick={() => setActiveSection('mainSponsors')}
+                  className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                    activeSection === 'mainSponsors' ? 'bg-red-50 text-red-600'
+                    : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-medium">Main Sponsors</span>
+                </button>
               </div>
             </div>
 
@@ -295,6 +307,11 @@ const AdminDashboard = () => {
               <SponsorEditor setActiveSection={setActiveSection} />
             )}
 
+            {/* Main Sponsor Section Editor */}
+            {activeSection === 'mainSponsors' && (
+              <MainSponsorEditor setActiveSection={setActiveSection} />
+            )}
+
             {/* Introduction/About Section Editor */}
             {activeSection === 'about' && (
               <IntroductionEditor setActiveSection={setActiveSection} />
@@ -308,21 +325,6 @@ const AdminDashboard = () => {
             {/* About Section Editor */}
             {activeSection === 'events' && (
               <AboutEditor setActiveSection={setActiveSection} />
-            )}
-
-            {/* Other Sections*/}
-            {activeSection !== 'dashboard' && 
-             activeSection !== 'hero' &&
-             activeSection !== 'about' &&
-             activeSection !== 'gallery' &&
-             activeSection !== 'events' &&  
-             activeSection !== 'sponsors' && (
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section
-                </h2>
-                <p className="text-gray-600">This section is under development. Coming soon!</p>
-              </div>
             )}
           </main>
         </div>
