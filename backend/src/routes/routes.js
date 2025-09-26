@@ -10,6 +10,7 @@ const introductionController = require('../controllers/introductionController');
 const galleryController = require('../controllers/galleryController');
 const aboutController = require('../controllers/aboutController');
 const mainSponsorController = require('../controllers/mainSponsorController');
+const fieldController = require('../controllers/fieldController');
 
 
 // Configure multer storage
@@ -63,5 +64,11 @@ router.get('/mainSponsors', mainSponsorController.getMainSponsors);
 router.post('/mainSponsors', upload.single('image'), mainSponsorController.createMainSponsor);
 router.put('/mainSponsors/:id', mainSponsorController.updateMainSponsor);
 router.delete('/mainSponsors/:id', mainSponsorController.deleteMainSponsor);
+
+// Field routes
+router.get('/fields', fieldController.getFields);
+router.post('/fields', fieldController.createField);
+router.put('/fields/:id', fieldController.updateField);
+router.delete('/fields/:id', fieldController.deleteField);
 
 module.exports = router;

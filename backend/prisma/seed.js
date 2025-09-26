@@ -95,6 +95,32 @@ async function main() {
       }
     ]
   });
+
+  // Seed Fields
+  await prisma.field.createMany({
+    data: [
+      {
+        name: 'Elektroonika',
+        description: 'See valdkond on suunatud neile, kes tunnevad end koduselt programmeerimises ja elektroonikaga eksperimenteerimises. Võistlus avab ukse mitmesuguste põnevate ülesannete lahendamisele, alates lasteraamatute loomisest tehisintellektiga kuni droonipõhiste isikutuvastussüsteemide arendamiseni!',
+        icon: 'Cpu'
+      },
+      {
+        name: 'Mehaanika',
+        description: 'Mehaanikaülesanded põhinevad mehaanikafüüsika põhialustel, nõudes loovust ja tehnilist nutikust. Varasematel aastatel on ülesanneteks olnud näiteks maavõnkumistele vastupidava ja võimalikult suurt raskust kannatava torni ehitamine ning liivase maastiku jaoks sõiduki loomine.',
+        icon: 'Cog'
+      },
+      {
+        name: 'Ehitus',
+        description: 'Ehituses osaledes ei tohiks sulle võõras olla mehaanikafüüsika, lihtne elektroonika ega tohiks puududa ka loogiline mõtlemine. Ehitusvaldkonnas testime sinu võimet projekteerida ja teostada hämmastava väljanägemisega konstruktsioone! Varasematel aastatel on ülesanneteks olnud näiteks avaneva silla ehitamine, võimalikult väikese soojusjuhtivusega materjali loomine ja katusekonstruktsioon.',
+        icon: 'Building'
+      },
+      {
+        name: 'IT',
+        description: 'Osaledes Enginaatori IT-valdkonnas, saad testida oma meeskonna oskusi nii back-end kui ka front-end arenduses, võimalusega tõestada, et sul on silma disaini (UI/UX) jaoks ning arusaam riistvarast ja erinevatest kommunikatsiooniprotokollidest. 17 tunni jooksul testitakse sinu võimet ühendada serveripoolne loogika ja silmapaistev kasutajaliides ühtseks, toimivaks lahenduseks.',
+        icon: 'Code'
+      }
+    ]
+  });
 }
 
 main()

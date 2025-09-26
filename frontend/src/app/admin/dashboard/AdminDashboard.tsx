@@ -15,6 +15,7 @@ import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
 import AboutEditor from './AboutEditor';
+import FieldEditor from './FieldEditor';
 
 
 
@@ -325,6 +326,11 @@ const AdminDashboard = () => {
             {/* About Section Editor */}
             {activeSection === 'events' && (
               <AboutEditor setActiveSection={setActiveSection} />
+            )}
+
+            {/* Fields Management Editor */}
+            {activeSection === 'fields' && (
+              <FieldEditor setActiveSection={setActiveSection} />
             )}
           </main>
         </div>
