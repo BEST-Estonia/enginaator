@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { useToast } from './hooks/use-toast.tsx';
+import { useToast } from './hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 interface RegistrationModalProps {
@@ -29,27 +29,64 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
   });
 
   const fields = ['Elektroonika', 'Mehaanika', 'Ehitus', 'IT'];
+  const [submitting, setSubmitting] = useState(false);
 
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Basic validation
+    if (submitting) return;
+
     if (!formData.teamName || !formData.leaderName || !formData.leaderEmail || !formData.field) {
-      toast({
-        title: "Viga",
-        description: "Palun täida kõik vajalikud väljad",
-        variant: "destructive"
-      });
+      toast({ title: "Viga", description: "Palun täida kõik vajalikud väljad", variant: "destructive" });
       return;
     }
-    // Success toast
-    toast({
-      title: "Edukalt saadetud!",
-      description: "Tiim registreeritud edukalt!",
-    });
-    onClose();
+
+    setSubmitting(true);
+    try {
+      const cleanedMembers = formData.members.filter(m =>
+        (m.name && m.name.trim()) ||
+        (m.email && m.email.trim()) ||
+        (m.phone && m.phone.trim()) ||
+        (m.age && m.age.trim())
+      );
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/teams/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            teamName: formData.teamName,
+            field: formData.field,
+            leaderName: formData.leaderName,
+            leaderEmail: formData.leaderEmail,
+            leaderPhone: formData.leaderPhone,
+            members: cleanedMembers,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast({
+          title: "Viga",
+          description: data?.error || "Serveri viga",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({ title: "Edukalt saadetud!", description: "Tiim registreeritud!" });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Võrguviga", description: "Proovi uuesti.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
+
 
   const updateMember = (index: number, field: string, value: string) => {
     const newMembers = [...formData.members];
@@ -213,11 +250,15 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
-            <button 
-              type="submit" 
-              className="flex-1 bg-[#ce1f22] hover:bg-[#B8252A] text-white font-medium py-3 rounded-md transition-all duration-200 hover:scale-[1.02]"
+            <button
+              type="submit"
+              disabled={submitting}
+              className={cn(
+                "flex-1 bg-[#ce1f22] hover:bg-[#B8252A] text-white font-medium py-3 rounded-md transition-all duration-200 hover:scale-[1.02]",
+                submitting && "opacity-60 cursor-not-allowed hover:scale-100"
+              )}
             >
-              Registreeri tiim
+              {submitting ? "Saadan..." : "Registreeri tiim"}
             </button>
             <button 
               type="button" 
