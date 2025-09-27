@@ -1,110 +1,102 @@
-const { PrismaClient } = require('@prisma/client');
+// backend/src/controllers/teamController.js
+const { PrismaClient } = require("@prisma/client");
+const { z } = require("zod");
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ["warn", "error"] });
 
-//First function is to register a new team
-const registerTeam = async (req, res) => {
-    try {
-        const {teamName, field, leaderName, leaderEmail, leaderPhone, members} = req.body;
+const allowedFields = new Set(["Elektroonika", "Mehaanika", "Ehitus", "IT"]);
 
-        //Save team to database
-        const team = await prisma.team.create({
-            data: {
-                teamName,
-                field,
-                leaderName,
-                leaderEmail,
-                leaderPhone,
-                members: {
-                    create: members.map(member => ({
-                        name: member.name,
-                        age: parseInt(member.age),
-                        email: member.email
-                    }))
-                }
-            },
-            include: {
-                members: true
-            }
-        });
+// zod skeem
+const MemberSchema = z.object({
+  name: z.string().trim().max(100).optional().default(""),
+  age: z.string().trim().max(20).optional().default(""),
+  email: z.string().email().max(255).optional().or(z.literal("")).transform(v => v || null),
+  phone: z.string().trim().max(20).optional().or(z.literal("")).transform(v => v || null),
+});
 
-        res.status(201).json({
-            success: true,
-            message: 'Team registered successfully!',
-            team
-        });
-    } catch (error) {
-        console.error('Error registering team:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to register team',
-            error: error.message
-        });
+const RegistrationSchema = z.object({
+  teamName: z.string().trim().min(1).max(100),
+  field: z.string().refine(v => allowedFields.has(v), "Invalid field"),
+  leaderName: z.string().trim().min(1).max(100),
+  leaderEmail: z.string().email().max(255),
+  leaderPhone: z.string().trim().max(20).optional().or(z.literal("")).transform(v => v || null),
+  members: z.array(MemberSchema).max(10).default([]),
+});
+
+// POST /api/teams/register
+exports.registerTeam = async (req, res) => {
+  try {
+    const parsed = RegistrationSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ error: "Validation failed", details: parsed.error.flatten() });
     }
+    const data = parsed.data;
+
+    const membersClean = (data.members || [])
+      .filter((m) =>
+        (m.name && m.name.trim()) ||
+        (m.email && m.email.trim()) ||
+        (m.phone && m.phone.trim()) ||
+        (m.age && m.age.trim())
+      )
+      .map((m) => ({
+        name: (m.name || "").trim(),
+        age: (m.age || "").trim(),
+        email: m.email ? m.email.trim() : null,
+        phone: m.phone ? m.phone.trim() : null,
+      }));
+
+    const created = await prisma.team.create({
+      data: {
+        name: data.teamName,
+        field: data.field,
+        leaderName: data.leaderName,
+        leaderEmail: data.leaderEmail,
+        leaderPhone: data.leaderPhone,
+        members: membersClean.length ? { create: membersClean } : undefined,
+      },
+      select: { id: true, name: true, createdAt: true },
+    });
+
+    return res.status(201).json({ ok: true, id: created.id });
+  } catch (e) {
+
+    if (e && e.code === "P2002") {
+      return res.status(409).json({ error: "Team name already exists" });
+    }
+    console.error("registerTeam error:", e);
+    return res.status(500).json({ error: "Internal error" });
+  }
 };
 
-// Function 2: Get all teams
-const getAllTeams = async (req, res) => {
-    try {
-        const teams = await prisma.team.findMany({
-            include: {
-                members: true
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        });
-
-        res.json({
-            success: true,
-            count: teams.length,
-            teams
-        });
-
-    } catch (error) {
-        console.error('Error getting teams:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to get teams',
-            error: error.message
-        });
-    }
+// GET /api/teams  (lihtne list vaateks)
+exports.getAllTeams = async (req, res) => {
+  try {
+    const teams = await prisma.team.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { members: true },
+      take: 100,
+    });
+    res.json({ items: teams });
+  } catch (e) {
+    console.error("getAllTeams error:", e);
+    res.status(500).json({ error: "Internal error" });
+  }
 };
 
-//Function 3: Get team statistics
-const getTeamStats = async (req, res) => {
-    try {
-        const totalTeams = await prisma.team.count();
-        const totalMembers = await prisma.teamMember.count();
-
-        const teamsByField = await prisma.team.groupBy({
-            by: ['field'],
-            _count: {
-                field: true
-            }
-        });
-
-        res.json({
-            success: true,
-            stats: {
-                totalTeams,
-                totalMembers,
-                averageMembersPerTeam: totalTeams > 0 ? (totalMembers / totalTeams).toFixed(2) : 0,
-                teamsByField
-            }
-        });
-    } catch (error) {
-        console.error('Error getting stats:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to get statistics',
-            error: error.message
-        });
-    }
-};
-
-module.exports = {
-    registerTeam,
-    getAllTeams,
-    getTeamStats
+// GET /api/teams/stats  (naidis statistikast)
+exports.getTeamStats = async (req, res) => {
+  try {
+    const total = await prisma.team.count();
+    const byField = await prisma.team.groupBy({
+      by: ["field"],
+      _count: { field: true },
+    });
+    res.json({ total, byField });
+  } catch (e) {
+    console.error("getTeamStats error:", e);
+    res.status(500).json({ error: "Internal error" });
+  }
 };
