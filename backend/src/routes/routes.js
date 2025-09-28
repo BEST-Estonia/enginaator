@@ -30,6 +30,7 @@ const upload = multer({ storage: storage });
 router.post('/teams/register', teamController.registerTeam);
 router.get('/teams', teamController.getAllTeams);
 router.get('/teams/stats', teamController.getTeamStats);
+router.delete('/teams/:id', teamController.deleteTeam);
 
 // Hero Section Routes
 router.get('/hero', getHeroSection);

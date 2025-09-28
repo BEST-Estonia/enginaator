@@ -16,6 +16,8 @@ import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
 import AboutEditor from './AboutEditor';
 import FieldEditor from './FieldEditor';
+import { fetchTeams } from '@/services/teamService';
+import RegistrationsTable from '@/app/components/RegistrationsTable';
 
 
 
@@ -31,17 +33,26 @@ const AdminDashboard = () => {
   });
 
   // Fetch stats when dashboard is loaded
+
   useEffect(() => {
     const loadStats = async () => {
-      // Example: Fetch sponsor count
       try {
         const sponsors = await fetchSponsors();
+        const t = await fetchTeams();
+
+        const total = (typeof (t as any).total === 'number')
+          ? (t as any).total
+          : Array.isArray((t as any).items) ? (t as any).items.length : 0;
+
         setStats(prev => ({
           ...prev,
-          activeSponsors: sponsors.length
+          totalregistrations: total,
+          totalTeams: total,
+          activeSponsors: sponsors.length,
         }));
       } catch (error) {
         console.error("Error fetching stats:", error);
+        setStats(prev => ({ ...prev, totalregistrations: 0, totalTeams: 0 }));
       }
     };
 
@@ -49,6 +60,7 @@ const AdminDashboard = () => {
       loadStats();
     }
   }, [activeSection]);
+
 
   return (
     <div className='min-h-screen bg-gray-50 flex'>
@@ -331,6 +343,11 @@ const AdminDashboard = () => {
             {/* Fields Management Editor */}
             {activeSection === 'fields' && (
               <FieldEditor setActiveSection={setActiveSection} />
+            )}
+
+            {/* Registrations Table */}
+            {activeSection === 'registrations' && (
+              <RegistrationsTable />
             )}
           </main>
         </div>
