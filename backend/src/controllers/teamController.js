@@ -74,12 +74,34 @@ exports.registerTeam = async (req, res) => {
 // GET /api/teams  (lihtne list vaateks)
 exports.getAllTeams = async (req, res) => {
   try {
-    const teams = await prisma.team.findMany({
-      orderBy: { createdAt: "desc" },
-      include: { members: true },
-      take: 100,
-    });
-    res.json({ items: teams });
+    const take = Math.min(parseInt(req.query.take || "20", 10), 100);
+    const skip = parseInt(req.query.skip || "0", 10);
+    const q = (req.query.q || "").trim();
+
+    const where = q ? {
+      OR: [
+        { name: { contains: q, mode: "insensitive" } },
+        { leaderName: { contains: q, mode: "insensitive" } },
+        { leaderEmail: { contains: q, mode: "insensitive" } },
+        { field: { contains: q, mode: "insensitive" } },
+      ],
+    } : {};
+
+    const [items, total] = await Promise.all([
+      prisma.team.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take,
+        skip,
+        include: {
+          _count: { select: { members: true } },
+          members: { select: { id: true, name: true, email: true, phone: true, age: true } },
+        },
+      }),
+      prisma.team.count({ where }),
+    ]);
+
+    res.json({ items, total });
   } catch (e) {
     console.error("getAllTeams error:", e);
     res.status(500).json({ error: "Internal error" });
@@ -100,3 +122,18 @@ exports.getTeamStats = async (req, res) => {
     res.status(500).json({ error: "Internal error" });
   }
 };
+
+exports.deleteTeam = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.team.delete({ where: { id } });
+    return res.status(204).send();
+  } catch (e) {
+    if (e?.code === "P2025") {
+      return res.status(404).json({ error: "Team not found" });
+    }
+    console.error("deleteTeam error:", e);
+    return res.status(500).json({ error: "Internal error" });
+  }
+};
+
