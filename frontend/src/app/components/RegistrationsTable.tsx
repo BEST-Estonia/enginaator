@@ -150,9 +150,20 @@ async function load(p = page, query = q) {
                     <div className="text-gray-900">{t.leaderName}</div>
                     <div className="text-xs text-gray-500">{t.leaderEmail}</div>
                   </td>
-                  <td className="p-3 align-top">
-                    {(t._count?.members ?? t.members?.length ?? 0)} member(s)
-                  </td>
+                    <td className="p-3 align-top text-xs text-gray-700 space-y-1">
+                    <div>
+                        {(t._count?.members ?? t.members?.length ?? 0)} member(s)
+                    </div>
+                    {t.members && t.members.length > 0 && (
+                        <div className="text-[11px] text-gray-500">
+                        {(() => {
+                            const acc = t.members.filter(m => m.accommodation).length;
+                            const consent = t.members.filter(m => m.consent).length;
+                            return `Accommodation: ${acc} • Consent: ${consent}`;
+                        })()}
+                        </div>
+                    )}
+                    </td>
                   <td className="p-3 align-top text-sm text-gray-700">{fmtDate(t.createdAt)}</td>
                   <td className="p-3 align-top">
                     <button
@@ -195,14 +206,51 @@ async function load(p = page, query = q) {
                         ) : (
                           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
                             {t.members.map(m => (
-                              <div key={m.id} className="rounded-md border bg-white p-3">
-                                <div className="font-medium text-gray-900">{m.name || "—"}</div>
-                                <div className="text-xs text-gray-500">
-                                  {m.email || "—"} {m.phone ? ` • ${m.phone}` : ""}
+                            <div key={m.id} className="rounded-md border bg-white p-3 space-y-2">
+                                <div className="flex items-center justify-between gap-2">
+                                <div className="font-medium text-gray-900 truncate">{m.name || "—"}</div>
+
+                                <span className="shrink-0 inline-flex items-center rounded px-2 py-0.5 text-[10px] border
+                                                bg-gray-50 text-gray-700 border-gray-200">
+                                    T-shirt: {m.shirtSize || "—"}
+                                </span>
                                 </div>
-                                <div className="text-xs text-gray-500">Age: {m.age || "—"}</div>
-                              </div>
+
+                                <div className="text-xs text-gray-500">
+                                {(m.email || "—")}{m.phone ? ` • ${m.phone}` : ""}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="text-gray-600">Age: <span className="text-gray-800">{m.age || "—"}</span></div>
+                                <div className="text-gray-600">
+                                    School: <span className="text-gray-800">{m.school || "—"}</span>
+                                </div>
+                                </div>
+
+                                {m.diet ? (
+                                <div className="text-xs text-gray-600">
+                                    Diet: <span className="text-gray-800">{m.diet}</span>
+                                </div>
+                                ) : null}
+
+                                <div className="flex flex-wrap gap-2 pt-1">
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
+                                                    ${m.accommodation
+                                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                                    : "bg-gray-50 text-gray-600 border-gray-200"}`}>
+                                    {m.accommodation ? "Accommodation: yes" : "Accommodation: no"}
+                                </span>
+
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
+                                                    ${m.consent
+                                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                                    : "bg-red-50 text-red-700 border-red-200"}`}>
+                                    {m.consent ? "Consent: given" : "Consent: missing"}
+                                </span>
+                                </div>
+                            </div>
                             ))}
+
                           </div>
                         )}
                       </div>

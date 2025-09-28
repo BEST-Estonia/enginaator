@@ -9,8 +9,12 @@ export type TeamRow = {
   leaderPhone?: string | null;
   createdAt: string;
   _count?: { members: number };
-  members?: Array<{ id: string; name: string; email?: string | null; phone?: string | null; age: string }>;
-};
+  members?: Array<{ id: string; name: string; email?: string | null; phone?: string | null; age: string; consent: boolean;
+  accommodation: boolean;
+  shirtSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | null;
+  school: string | null;
+  diet: string | null;
+}>};
 
 export async function fetchTeams(opts?: { take?: number; skip?: number; q?: string }) {
   const params = new URLSearchParams();
