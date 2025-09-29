@@ -1,5 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const cloudinary = require('../utils/cloudinary');
+
+function getCloudinaryPublicId(url) {
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return match ? match[1] : null;
+}
 
 //Get all main sponsors
 exports.getMainSponsors = async (req, res) => {
@@ -14,21 +20,14 @@ exports.getMainSponsors = async (req, res) => {
 //Create a new main sponsor
 exports.createMainSponsor = async (req, res) => {
     try {
-        // Check if an image file was uploaded
         if (!req.file) {
             return res.status(400).json({ error: 'Sponsor image is required' });
         }
-
-        // Get the image URL and sponsor info from the request
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = req.file.path; // Cloudinary URL
         const { sponsorName, sponsorText, website } = req.body;
-
-        // Validate required fields
         if (!sponsorName) {
             return res.status(400).json({ error: 'Sponsor name is required' });
         }
-
-        // Create the sponsor in the database
         const sponsor = await prisma.mainSponsor.create({
             data: {
                 sponsorName,
@@ -37,7 +36,6 @@ exports.createMainSponsor = async (req, res) => {
                 website: website || null
             },
         });
-
         res.status(201).json(sponsor);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create main sponsor' });
@@ -61,11 +59,24 @@ exports.updateMainSponsor = async (req, res) => {
 
 // Delete a main sponsor
 exports.deleteMainSponsor = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
+    const sponsor = await prisma.mainSponsor.findUnique({ where: { id } });
+    if (!sponsor) {
+      return res.status(404).json({ error: 'Main sponsor not found' });
+    }
+
+    if (sponsor.imageUrl && sponsor.imageUrl.includes('cloudinary.com')) {
+      const publicId = getCloudinaryPublicId(sponsor.imageUrl);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
     await prisma.mainSponsor.delete({ where: { id } });
-    res.json({ message: 'Main sponsor deleted' });
+    res.json({ message: 'Main sponsor deleted successfully' });
   } catch (error) {
+    console.error('Error deleting main sponsor:', error);
     res.status(500).json({ error: 'Failed to delete main sponsor' });
   }
 };

@@ -11,19 +11,19 @@ const galleryController = require('../controllers/galleryController');
 const aboutController = require('../controllers/aboutController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../utils/cloudinary');
+const projectTeamController = require('../controllers/projectTeamController');
 
 
 // Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'enginaator',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
 });
-
 const upload = multer({ storage: storage });
 
 // Team routes (with /teams prefix)
@@ -70,5 +70,10 @@ router.get('/fields', fieldController.getFields);
 router.post('/fields', fieldController.createField);
 router.put('/fields/:id', fieldController.updateField);
 router.delete('/fields/:id', fieldController.deleteField);
+
+router.get('/projectMembers', projectTeamController.getProjectMembers);
+router.post('/projectMembers', upload.single('image'), projectTeamController.createProjectMember);
+router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
+router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
 
 module.exports = router;

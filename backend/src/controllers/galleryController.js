@@ -3,31 +3,17 @@ const prisma = new PrismaClient();
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../utils/cloudinary');
 
-// Gallery specific storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../public/uploads/gallery/'));
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'enginaator/gallery',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
   },
-  filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const extension = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + extension);
-  }
 });
-
-const upload = multer({
-    storage: storage,
-    limits: {fileSize: 10 * 1024 * 1024}, //10MB size limit
-    fileFilter: (req, file, cb) => {
-    // Accept only images
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed'));
-    }
-    cb(null, true);
-  }
-}).single('image');
+const upload = multer({ storage: storage }).single('image');
 
 
 exports.getAllGalleryImages = async (req, res) => {
@@ -48,23 +34,19 @@ exports.getAllGalleryImages = async (req, res) => {
 }
 
 exports.createImage = async (req, res) => {
-  // Use the upload middleware first
   upload(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
-
     try {
       const { alt, caption } = req.body;
-      
       const galleryImage = await prisma.galleryImage.create({
         data: {
-          url: `/uploads/gallery/${req.file.filename}`,
+          url: req.file.path, // Cloudinary URL
           alt: alt || null,
           caption: caption || null
         }
       });
-
       res.status(201).json({
         message: 'Gallery image uploaded successfully',
         galleryImage
@@ -77,35 +59,29 @@ exports.createImage = async (req, res) => {
 };
 
 exports.deleteGalleryImage = async (req, res) => {
-    const {id} = req.params;
-
-    try {
-        // First, get the image record to find the file path
-        const galleryImage = await prisma.galleryImage.findUnique({
-            where: {id}
-        });
-
-        if (!galleryImage) {
-             return res.status(404).json({ error: 'Gallery image not found' });
-        }
-
-        //Delete the file from filesystem
-        const filePath = path.join(__dirname, '../../public', galleryImage.url);
-
-        // Check if the file exists before attempting to delete
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-
-        //Delete from database
-        await prisma.galleryImage.delete({
-            where: {id}
-        });
-
-        res.json({ message: 'Gallery image deleted successfully' });
-
-    } catch (error) {
-        console.error('Error deleting gallery image:', error);
-        res.status(500).json({ error: 'Failed to delete gallery image' });
+  const { id } = req.params;
+  try {
+    const image = await prisma.galleryImage.findUnique({ where: { id } });
+    if (!image) {
+      return res.status(404).json({ error: 'Gallery image not found' });
     }
+
+    if (image.url && image.url.includes('cloudinary.com')) {
+      const publicId = getCloudinaryPublicId(image.url);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    await prisma.galleryImage.delete({ where: { id } });
+    res.json({ message: 'Gallery image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting gallery image:', error);
+    res.status(500).json({ error: 'Failed to delete gallery image' });
+  }
+};
+
+function getCloudinaryPublicId(url) {
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return match ? match[1] : null;
 }

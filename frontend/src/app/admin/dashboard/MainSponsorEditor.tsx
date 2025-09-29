@@ -109,12 +109,54 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
           placeholder="Website (optional)"
           className="border p-2 rounded w-full"
         />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => setSelectedImage(e.target.files?.[0] || null)}
-          className="border p-2 rounded w-full"
-        />
+        {/* Sponsor Logo Upload */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Sponsor Logo
+          </label>
+          <div className="space-y-3">
+            {/* Custom styled file input */}
+            <div className="relative">
+              <label
+                htmlFor="main-sponsor-logo-upload"
+                className="flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors group"
+              >
+                <span className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-2 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-gray-600 group-hover:text-gray-700">
+                    {selectedImage ? 'Change Logo Image' : 'Select Logo Image'}
+                  </span>
+                </span>
+              </label>
+              <input
+                id="main-sponsor-logo-upload"
+                type='file'
+                accept='image/*'
+                onChange={e => setSelectedImage(e.target.files?.[0] || null)}
+                className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+              />
+            </div>
+
+            {/* Preview selected image */}
+            {selectedImage && (
+              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 mb-2">Preview:</p>
+                <div className="h-20 flex items-center justify-center">
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Preview"
+                    className="max-h-16 object-contain"
+                    style={{ width: 160, height: 64 }}
+                  />
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm text-gray-500 mt-1">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+          </div>
+        </div>
         <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded">
           {editingId ? "Update Sponsor" : "Add Sponsor"}
         </button>
@@ -141,7 +183,7 @@ const MainSponsorEditor: React.FC<MainSponsorEditorProps> = ({ setActiveSection 
               <div>{sponsor.sponsorText}</div>
               {sponsor.imageUrl && (
                 <img
-                  src={IMAGE_BASE_URL + sponsor.imageUrl}
+                  src={sponsor.imageUrl}
                   alt={sponsor.sponsorName}
                   className="h-24 w-auto max-w-xs rounded object-contain mx-auto"
                 />

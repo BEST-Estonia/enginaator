@@ -2,6 +2,15 @@ const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('../utils/cloudinary');
+
+// Extract public ID from Cloudinary URL
+function getCloudinaryPublicId(url) {
+  // Example: https://res.cloudinary.com/your_cloud/image/upload/v1234567890/enginaator/filename.jpg
+  // We want: enginaator/filename (without extension)
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return match ? match[1] : null;
+}
 
 // Get all sponsors
 exports.getAllSponsors = async (req, res) => {
@@ -25,21 +34,14 @@ exports.getAllSponsors = async (req, res) => {
 // Create a new sponsor
 exports.createSponsor = async (req, res) => {
     try {
-        //Check if an image file was uploaded
         if (!req.file) {
             return res.status(400).json({error: 'Sponsor image is required'});
         }
-
-        // Get the image URL and sponsor name from the request
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = req.file.path; // Cloudinary URL
         const {name, website, tier} = req.body;
-
-        // Validate required fields
         if (!name) {
             return res.status(400).json({error: 'Sponsor name is required'});
         }
-
-        // Create the sponsor in the database
         const sponsor = await prisma.sponsor.create({
             data: {
                 name,
@@ -48,8 +50,6 @@ exports.createSponsor = async (req, res) => {
                 tier: tier || null
             },
         });
-
-        // Return the created sponsor
         res.status(201).json(sponsor);
     } catch (error) {
         console.error('Error creating sponsor:', error);
@@ -62,7 +62,7 @@ exports.deleteSponsor = async (req, res) => {
     const {id} = req.params;
 
     try {
-        //First, find the sponsor to get the image path
+        // Find the sponsor to get the image URL
         const sponsor = await prisma.sponsor.findUnique({
             where: {id},
         });
@@ -71,14 +71,11 @@ exports.deleteSponsor = async (req, res) => {
             return res.status(404).json({error: 'Sponsor not found'});
         }
 
-        //Delete the image file if it exists
-        if (sponsor.imageUrl) {
-            // Extract the filename from the URL (e.g., /uploads/image-123456.jpg)
-            const imagePath = path.join(__dirname, '../../public', sponsor.imageUrl);
-
-            // Check if the file exists before attempting to delete
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
+        // Delete the image from Cloudinary if it exists
+        if (sponsor.imageUrl && sponsor.imageUrl.includes('cloudinary.com')) {
+            const publicId = getCloudinaryPublicId(sponsor.imageUrl);
+            if (publicId) {
+                await cloudinary.uploader.destroy(publicId);
             }
         }
 
@@ -87,7 +84,6 @@ exports.deleteSponsor = async (req, res) => {
             where: {id},
         });
 
-        //Return success message
         res.json({message: 'Sponsor deleted successfully'});
     } catch (error) {
         console.error('Error deleting sponsor:', error);

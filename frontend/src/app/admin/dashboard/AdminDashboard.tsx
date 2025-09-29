@@ -16,6 +16,7 @@ import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
 import AboutEditor from './AboutEditor';
 import FieldEditor from './FieldEditor';
+import ProjectMemberEditor from './ProjectMemberEditor';
 
 
 
@@ -331,6 +332,11 @@ const AdminDashboard = () => {
             {/* Fields Management Editor */}
             {activeSection === 'fields' && (
               <FieldEditor setActiveSection={setActiveSection} />
+            )}
+
+            {/* Project Members Management Editor */}
+            {activeSection === 'team' && (
+              <ProjectMemberEditor setActiveSection={setActiveSection} />
             )}
           </main>
         </div>

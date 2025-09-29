@@ -126,3 +126,15 @@ model Field {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model ProjectMember {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  phone       String
+  email       String
+  imageUrl    String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
