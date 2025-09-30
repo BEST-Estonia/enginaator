@@ -7,6 +7,15 @@ datasource db {
     url= env("DATABASE_URL")
 }
 
+enum ShirtSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
 model Team {
     id          String       @id @default(cuid())
   name        String       @unique @db.VarChar(100)
@@ -31,6 +40,11 @@ model TeamMember {
   age    String  @db.VarChar(20)
   email  String? @db.VarChar(255)
   phone  String? @db.VarChar(20)
+  accommodation  Boolean    @default(false)
+  shirtSize      ShirtSize?
+  school         String?    @db.VarChar(120)
+  diet           String?    @db.VarChar(255)
+  consent      Boolean     @default(false)
   teamId String
   team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
   
