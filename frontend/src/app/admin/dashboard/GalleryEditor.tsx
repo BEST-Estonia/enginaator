@@ -268,7 +268,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ setActiveSection }) => {
                 {/* Image Display */}
                 <div className="aspect-square mb-3 overflow-hidden rounded-lg bg-gray-100">
                   <Image 
-                    src={`${API_URL}${image.url}`}
+                    src={image.url.startsWith('http') ? image.url : `${API_URL}${image.url}`}
                     alt={image.alt || 'Gallery image'} 
                     width={200}
                     height={200}

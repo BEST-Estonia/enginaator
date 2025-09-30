@@ -16,8 +16,10 @@ import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
 import AboutEditor from './AboutEditor';
 import FieldEditor from './FieldEditor';
+import ProjectMemberEditor from './ProjectMemberEditor';
 import { fetchTeams } from '@/services/teamService';
 import RegistrationsTable from '@/app/components/RegistrationsTable';
+
 
 
 
@@ -345,6 +347,9 @@ const AdminDashboard = () => {
               <FieldEditor setActiveSection={setActiveSection} />
             )}
 
+            {/* Project Members Management Editor */}
+            {activeSection === 'team' && (
+              <ProjectMemberEditor setActiveSection={setActiveSection} />
             {/* Registrations Table */}
             {activeSection === 'registrations' && (
               <RegistrationsTable />

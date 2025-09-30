@@ -9,6 +9,9 @@ import { fetchGalleryImages, GalleryImage } from '@/services/galleryService';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+const getImageSrc = (url: string) =>
+  url && url.startsWith('http') ? url : `${API_URL}${url}`;
+
 const Gallery = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -180,7 +183,9 @@ const Gallery = () => {
               ref={carouselRef}
               className="-ml-4 flex overflow-x-auto scroll-smooth no-scrollbar"
             >
-              {images.map((image, index) => (
+              {images
+                .filter(image => image.url && image.url.length > 0)
+                .map((image, index) => (
                 <CarouselItem
                   key={image.id}
                   className="pl-4 md:basis-1/2 lg:basis-1/3"
@@ -191,7 +196,7 @@ const Gallery = () => {
                   >
                     <div className="aspect-video overflow-hidden">
                       <Image
-                        src={`${API_URL}${image.url}`}
+                        src={getImageSrc(image.url)}
                         alt={image.alt || "Gallery image"}
                         width={400}
                         height={300}
@@ -298,7 +303,7 @@ const Gallery = () => {
             >
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
             <Image
-                src={`${API_URL}${images[viewImage].url}`}
+                src={getImageSrc(images[viewImage].url)}
                 alt={images[viewImage].alt || `Gallery image ${viewImage + 1}`}
                 width={800}
                 height={600}

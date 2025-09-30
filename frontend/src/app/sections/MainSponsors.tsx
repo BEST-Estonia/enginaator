@@ -57,7 +57,7 @@ const MainSponsors = () => {
                           <div className="flex-shrink-0">
                             <div className="w-32 h-32 lg:w-40 lg:h-40 bg-white rounded-xl flex items-center justify-center shadow-lg p-4">
                               <img
-                                src={IMAGE_BASE_URL + sponsor.imageUrl}
+                                src={sponsor.imageUrl}
                                 alt={`${sponsor.sponsorName} logo`}
                                 className="object-contain max-w-full max-h-full"
                               />

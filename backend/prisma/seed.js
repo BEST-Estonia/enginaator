@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed Introduction with features
+  // Seed Introduction with features (no image upload needed)
   await prisma.introduction.create({
     data: {
       title: "MIS ON ENGINAATOR?",
@@ -35,7 +35,7 @@ async function main() {
     }
   });
 
-  // Seed AboutSection
+  // Seed AboutSection (no image upload needed)
   await prisma.aboutSection.create({
     data: {
       kusContent:
@@ -47,56 +47,53 @@ async function main() {
     }
   });
 
-  // Seed Gallery Images
-  await prisma.galleryImage.createMany({
-    data: [
-      { url: "/assets/1.jpg", alt: "Enginaator Gallery 1", caption: "Võistluse hetk 1" },
-      { url: "/assets/2.jpg", alt: "Enginaator Gallery 2", caption: "Võistluse hetk 2" },
-      { url: "/assets/3.jpg", alt: "Enginaator Gallery 3", caption: "Võistluse hetk 3" },
-      { url: "/assets/4.jpg", alt: "Enginaator Gallery 4", caption: "Võistluse hetk 4" },
-      { url: "/assets/5.jpg", alt: "Enginaator Gallery 5", caption: "Võistluse hetk 5" },
-      { url: "/assets/6.png", alt: "Enginaator Gallery 6", caption: "Võistluse hetk 6" },
-      { url: "/assets/7.jpeg", alt: "Enginaator Gallery 7", caption: "Võistluse hetk 7" }
-    ]
-  });
+  // Seed Gallery Images (using Cloudinary URLs directly)
+  const galleryImages = [
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088400/6_g8jnqc.png', alt: "Gallery 6", caption: "Võistluse hetk 6" },
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088400/7_jogphf.jpg', alt: "Gallery 7", caption: "Võistluse hetk 7" },
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088396/2_vba2re.jpg', alt: "Gallery 2", caption: "Võistluse hetk 2" },
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088396/3_tmgo20.jpg', alt: "Gallery 3", caption: "Võistluse hetk 3" },
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088396/4_apmtig.jpg', alt: "Gallery 4", caption: "Võistluse hetk 4" },
+    { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088399/5_gs51pz.jpg', alt: "Gallery 5", caption: "Võistluse hetk 5" }
+  ];
+  await prisma.galleryImage.createMany({ data: galleryImages });
 
-  // Seed Main Sponsors
-  await prisma.mainSponsor.createMany({
-    data: [
-      {
-        sponsorName: "ETS NORD",
-        sponsorText: "ETS NORD on üks Põhja-Euroopa juhtivaid ventilatsioonilahenduste pakkujaid, tegutsedes edukalt juba 26 aastat. Toodame ja arendame ventilatsiooniseadmeid, mis tagavad puhta ja tervisliku sisekliima ning parema enesetunde siseruumides viibijatele. Meie 500-liikmeline professionaalne meeskond tegutseb neljas riigis, pakkudes tuge kogu projekti vältel – alates planeerimisest kuni paigalduse ja hoolduseni. Keskendume klientide vajadustele ning keskkonnasäästlikele ja jätkusuutlikele lahendustele.",
-        imageUrl: "/uploads/etsnord.png",
-        website: "https://etsnord.ee"
-      },
-      {
-        sponsorName: "Stoneridge",
-        sponsorText: "Stoneridge Electronics AS on globaalne elektroonikatootja, kes pakub innovatiivseid lahendusi auto- ja kaubaveo tööstusharudele. Ettevõtte tootevalik hõlmab nutikaid sõidukisüsteeme, mis tagavad turvalisuse, mugavuse ja tõhususe. Stoneridge\'i tehniline osakond on võimeline looma kohandatud lahendusi vastavalt klientide vajadustele ning ettevõtte tugevus seisneb tehnoloogiliste uuenduste ja kvaliteetsete toodete väljatöötamises. Ettevõte on pühendunud ka jätkusuutlikkusele, kasutades loodussõbralikke tootmisprotsesse ja toetades ühiskonna sotsiaalseid ja keskkonnaalaseid algatusi. Stoneridge\'i eesmärk on olla juhtiv elektroonikalahenduste pakkuja transporditööstuses.",
-        imageUrl: "/uploads/stoneridge.png",
-        website: "https://stoneridge.com"
-      },
-      {
-        sponsorName: "HexTech",
-        sponsorText: "HexTech on Eesti tudengite kaitsetööstuse start-up, mis on pühendunud droonituvastuse võimekuse loomisele nii tsiviil- kui ka militaarsektoris. Juba 2026 aasta lõpuks katab HexTech Tallinna linna enda droonituvastuse sensorvõrgustikuga, millega tagatakse ohutum õhuruum kõigile lennureisijatele ning esmane kaitse kiht Eesti kriitilisele infrastruktuurile. Lisaks meie tsiviilsensoritele on arenduses erinevaid militaarlahendusi, millega loome võimekuse tuvastada raadio- ja helilainete abil ka FPV ehk kamikaze droone ning venelaste militaardroone. Enda lahenduste arendamisel teeme pidevat koostööd Ukraina ning Eesti jõustruktuuridega.",
-        imageUrl: "/uploads/hextech.png",
-        website: "https://hextech.ee"
-      },
-      {
-        sponsorName: "Ruukki",
-        sponsorText: "Ruukki Construction tarnib terasepõhiseid ehitustooteid ja -teenuseid katuste ning seinte kestlikuks ehitamiseks. Ruukki eesmärk on pakkuda jätkusuutlike ehitiste rajamiseks terviklikke terasepõhiseid katuse- ja ehitustoodete lahendusi, mis hõlmavad ka projekteerimist ja tehnilist tuge. Meie heaks töötab pea 1350 inimest ning meil on 14 spetsialiseerunud tehast. Tugev kohalolu kümnes Euroopa riigis võimaldab pakkuda kohalikele klientidele meie peamisi kaubamärke, milleks on Ruukki ja Plannja. Oleme osa SSAB-st ning meil on pikk terasetöötlemise ja ehitustööstuse kogemus.",
-        imageUrl: "/uploads/ruukki.webp",
-        website: "https://ruukki.ee"
-      },
-      {
-        sponsorName: "ABB",
-        sponsorText: 'ABB on elektrifitseerimise ja automatiseerimise valdkonna tehnoloogialiider, kes võimaldab luua säästvamat ning ressursitõhusamat tulevikku. Ühendades oma inseneriteadmised ja digilahendused, aitame tööstusettevõtetel saavutada maksimaalset tulemuslikkust olles samal ajal tõhusamad, tootlikumad ja keskkonnasõbralikumad. Just sellist lähenemist kirjeldame sõnadega: „Engineered to Outrun". Tuginedes enam kui 140-aastasele ajaloole, on ABB enam kui 110 000 töötajat pühendunud innovaatiliste lahenduste leidmisele tööstuse ümberkujundamiseks.',
-        imageUrl: "/uploads/abb.png",
-        website: "https://abb.com"
-      }
-    ]
-  });
+  // Seed Main Sponsors (using Cloudinary URLs directly)
+  const mainSponsors = [
+    {
+      sponsorName: "ETS NORD",
+      sponsorText: "ETS NORD on üks Põhja-Euroopa juhtivaid ventilatsioonilahenduste pakkujaid, tegutsedes edukalt juba 26 aastat. Toodame ja arendame ventilatsiooniseadmeid, mis tagavad puhta ja tervisliku sisekliima ning parema enesetunde siseruumides viibijatele. Meie 500-liikmeline professionaalne meeskond tegutseb neljas riigis, pakkudes tuge kogu projekti vältel – alates planeerimisest kuni paigalduse ja hoolduseni. Keskendume klientide vajadustele ning keskkonnasäästlikele ja jätkusuutlikele lahendustele.",
+      imageUrl: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088950/etsnord_cmditm.png",
+      website: "https://etsnord.ee"
+    },
+    {
+      sponsorName: "Stoneridge",
+      sponsorText: "Stoneridge Electronics AS on globaalne elektroonikatootja, kes pakub innovatiivseid lahendusi auto- ja kaubaveo tööstusharudele. Ettevõtte tootevalik hõlmab nutikaid sõidukisüsteeme, mis tagavad turvalisuse, mugavuse ja tõhususe. Stoneridge'i tehniline osakond on võimeline looma kohandatud lahendusi vastavalt klientide vajadustele ning ettevõtte tugevus seisneb tehnoloogiliste uuenduste ja kvaliteetsete toodete väljatöötamises. Ettevõte on pühendunud ka jätkusuutlikkusele, kasutades loodussõbralikke tootmisprotsesse ja toetades ühiskonna sotsiaalseid ja keskkonnaalaseid algatusi. Stoneridge'i eesmärk on olla juhtiv elektroonikalahenduste pakkuja transporditööstuses.",
+      imageUrl: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088982/stoneridge_f9hxyu.png",
+      website: "https://stoneridge.com"
+    },
+    {
+      sponsorName: "HexTech",
+      sponsorText: "HexTech on Eesti tudengite kaitsetööstuse start-up, mis on pühendunud droonituvastuse võimekuse loomisele nii tsiviil- kui ka militaarsektoris. Juba 2026 aasta lõpuks katab HexTech Tallinna linna enda droonituvastuse sensorvõrgustikuga, millega tagatakse ohutum õhuruum kõigile lennureisijatele ning esmane kaitse kiht Eesti kriitilisele infrastruktuurile. Lisaks meie tsiviilsensoritele on arenduses erinevaid militaarlahendusi, millega loome võimekuse tuvastada raadio- ja helilainete abil ka FPV ehk kamikaze droone ning venelaste militaardroone. Enda lahenduste arendamisel teeme pidevat koostööd Ukraina ning Eesti jõustruktuuridega.",
+      imageUrl: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088962/hextech_mw8nwe.png",
+      website: "https://hextech.ee"
+    },
+    {
+      sponsorName: "Ruukki",
+      sponsorText: "Ruukki Construction tarnib terasepõhiseid ehitustooteid ja -teenuseid katuste ning seinte kestlikuks ehitamiseks. Ruukki eesmärk on pakkuda jätkusuutlike ehitiste rajamiseks terviklikke terasepõhiseid katuse- ja ehitustoodete lahendusi, mis hõlmavad ka projekteerimist ja tehnilist tuge. Meie heaks töötab pea 1350 inimest ning meil on 14 spetsialiseerunud tehast. Tugev kohalolu kümnes Euroopa riigis võimaldab pakkuda kohalikele klientidele meie peamisi kaubamärke, milleks on Ruukki ja Plannja. Oleme osa SSAB-st ning meil on pikk terasetöötlemise ja ehitustööstuse kogemus.",
+      imageUrl: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088974/ruukki_j6einq.webp",
+      website: "https://ruukki.ee"
+    },
+    {
+      sponsorName: "ABB",
+      sponsorText: 'ABB on elektrifitseerimise ja automatiseerimise valdkonna tehnoloogialiider, kes võimaldab luua säästvamat ning ressursitõhusamat tulevikku. Ühendades oma inseneriteadmised ja digilahendused, aitame tööstusettevõtetel saavutada maksimaalset tulemuslikkust olles samal ajal tõhusamad, tootlikumad ja keskkonnasõbralikumad. Just sellist lähenemist kirjeldame sõnadega: „Engineered to Outrun". Tuginedes enam kui 140-aastasele ajaloole, on ABB enam kui 110 000 töötajat pühendunud innovatiivsete lahenduste leidmisele tööstuse ümberkujundamiseks.',
+      imageUrl: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088941/abb_dp2a2z.png",
+      website: "https://abb.com"
+    }
+  ];
+  await prisma.mainSponsor.createMany({ data: mainSponsors });
 
-  // Seed Fields
+  // Seed Fields (no image upload needed)
   await prisma.field.createMany({
     data: [
       {
@@ -121,6 +118,51 @@ async function main() {
       }
     ]
   });
+
+  // Seed Project Members (using Cloudinary URLs)
+  const projectMembers = [
+    {
+      name: 'NADIM METWALLI',
+      role: 'TURUNDUSJUHT',
+      phone: '+372 56983182',
+      email: 'nametw@taltech.ee',
+      imageUrl: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759083573/nadim_apqfjo.jpg',
+      description: 'Nadim vastutab kogu turunduse eest.'
+    },
+    {
+      name: 'KERT KALLAS',
+      role: 'OSALEJATE JA LOGISTIKAJUHT',
+      phone: '+372 56273153',
+      email: 'kertka@taltech.ee',
+      imageUrl: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759083645/kert_adhcls.jpg',
+      description: 'Kert vastutab logistika ja osalejate eest.'
+    },
+    {
+      name: 'LISANDRA SOMMERMAN',
+      role: 'PROJEKTIJUHT',
+      phone: '+372 56827565',
+      email: 'lisomm@taltech.ee',
+      imageUrl: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759083652/lisandra_qwgtgh.jpg',
+      description: 'Lisandra juhib kogu projekti.'
+    },
+    {
+      name: 'ROMET KALF',
+      role: 'MÜÜGIJUHT',
+      phone: '+372 57871007',
+      email: 'rokalf@taltech.ee',
+      imageUrl: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759083657/romet_sxezld.jpg',
+      description: 'Romet vastutab müügi eest.'
+    },
+    {
+      name: 'HANS MARKUS KIILMAA',
+      role: 'PROGRAMMIJUHT',
+      phone: '+372 55678737',
+      email: 'hakiil@taltech.ee',
+      imageUrl: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759083573/hans_fynsgk.jpg',
+      description: 'Hans Markus vastutab programmi eest.'
+    }
+  ];
+  await prisma.projectMember.createMany({ data: projectMembers });
 }
 
 main()
