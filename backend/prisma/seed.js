@@ -163,6 +163,20 @@ async function main() {
     }
   ];
   await prisma.projectMember.createMany({ data: projectMembers });
+
+  // Seed Hero Section (no image upload needed)
+  await prisma.heroSection.create({
+    data: {
+      dateText: "17-20 APRILL 2025",
+      mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS", 
+      eventDate: "April 17, 2026 00:00:00",
+      backgroundImage: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759439184/hero-img_anlffe.jpg",
+      eventDateInfo: "17-20. aprill 2026",
+      location: "TalTech",
+      audience: "Insenerihuvilistele noortele",
+      duration: "4 päeva"
+    }
+  });
 }
 
 main()

@@ -1,0 +1,403 @@
+[33mcommit a4528f4489e6c0ebdfd42cf3f399135045416795[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: ecb99301 4db7fea2
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Tue Sep 30 11:45:48 2025 +0300
+
+    Merge pull request #32 from BEST-Estonia/cloudinary-implementation
+    
+    Implemented dynamic Project Member editor with Cloudinary image uploa…
+
+[33mcommit 4db7fea2bc8532230246f705e51085f40f28ef3b[m[33m ([m[1;31morigin/cloudinary-implementation[m[33m)[m
+Merge: 75f92f5e ecb99301
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Tue Sep 30 11:45:40 2025 +0300
+
+    Merge branch 'main' into cloudinary-implementation
+
+[33mcommit 75f92f5e8ac0a6b4892e0c39261ddbcfcc08cb1a[m[33m ([m[1;32mcloudinary-implementation[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Tue Sep 30 00:06:16 2025 +0300
+
+    Implemented dynamic Project Member editor with Cloudinary image upload, preview, and CRUD; update backend and frontend for cloud-based team management
+
+[33mcommit ecb993011faa4d1ba9a4b5fe2e2d0fb7e4adb67e[m
+Merge: 2a473636 3acf6bea
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Mon Sep 29 00:06:10 2025 +0300
+
+    Merge pull request #31 from BEST-Estonia/teams-to-admin
+    
+    registration extended with more info and fetched to db
+
+[33mcommit 3acf6bea87c60d118bd489dcda1ba8a057a3838e[m[33m ([m[1;31morigin/teams-to-admin[m[33m)[m
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Mon Sep 29 00:05:35 2025 +0300
+
+    registration extended with more info and fetched to db
+
+[33mcommit 2a4736364d72a058e5e8d39bb131478be41a762b[m
+Merge: 1ea4ca4f bf11ad31
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Sun Sep 28 18:03:23 2025 +0300
+
+    Merge pull request #30 from BEST-Estonia/teams-to-admin
+    
+    teams tab in admin dashboard init
+
+[33mcommit bf11ad31cab32d1a957f8ce78aa282c29e30afd0[m
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Sun Sep 28 18:01:18 2025 +0300
+
+    teams tab in admin dashboard init
+
+[33mcommit 1ea4ca4f8611e6da4c09a0a77f1cd20e7c7b4253[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Sat Sep 27 22:38:35 2025 +0300
+
+    Prisma update
+
+[33mcommit 8c0e692a576a1787e1761fdb83c4557c429472bd[m
+Merge: d647126b ea29a9a4
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Sat Sep 27 22:21:02 2025 +0300
+
+    Merge pull request #29 from BEST-Estonia/fields-editor
+    
+    Added dynamic Fields CMS with CRUD, backend API, and frontend integra…
+
+[33mcommit d647126bd743360c774f50098860639953053f19[m
+Merge: 0bc4e0c7 d08cd415
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Sat Sep 27 16:58:49 2025 +0300
+
+    Merge pull request #28 from BEST-Estonia/registration-logic
+    
+    registration form locally
+
+[33mcommit d08cd41591f3af05639b8450b095415067cf94b9[m[33m ([m[1;31morigin/registration-logic[m[33m)[m
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Sat Sep 27 16:57:55 2025 +0300
+
+    registration form locally
+
+[33mcommit ea29a9a47d5116ecabd822fc0a8aa09c2af82dca[m[33m ([m[1;31morigin/fields-editor[m[33m, [m[1;32mfields-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 26 23:43:47 2025 +0300
+
+    Added dynamic Fields CMS with CRUD, backend API, and frontend integration
+    
+    - Added Field model to Prisma schema and migrated database
+    - Implemented backend controller and routes for Field CRUD operations
+    - Created frontend service for fetching and managing fields
+    - Built admin dashboard FieldEditor for adding, editing, and deleting fields
+    - Made Fields section on public site fully dynamic
+    - Added seed data for default fields and icons
+
+[33mcommit 0bc4e0c7fcc595cc0a853b26bdcbbab4645d5ee8[m
+Merge: cc02181e 67301975
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Thu Sep 25 00:39:53 2025 +0300
+
+    Merge pull request #27 from BEST-Estonia/main-sponsors-editor
+    
+    Main sponsors editor
+
+[33mcommit 67301975dd2e0b87f803419c586acd9dc3113303[m[33m ([m[1;31morigin/main-sponsors-editor[m[33m, [m[1;32mmain-sponsors-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Thu Sep 25 00:30:03 2025 +0300
+
+    Implement full CMS for Enginaator website
+    
+    - Added dynamic editors and backend integration for Introduction, About Section, Gallery, and Main Sponsors
+    - Enabled image upload for sponsors using multer and Express static serving
+    - Updated frontend sections to fetch and render dynamic content from backend
+    - Created and improved seed scripts for all main sections and sponsors
+    - Polished admin dashboard UI and sidebar navigation
+    - Ensured all content is editable and updatable via CMS
+
+[33mcommit 7e157277e9ba1afa334ff7fdd2839f77570a0172[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Wed Sep 24 23:13:30 2025 +0300
+
+    Most setup done
+
+[33mcommit cc02181e414b8bdaa5314788e6b1ce3e400778b0[m
+Merge: bb4182f3 1692c4a1
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Tue Sep 23 18:39:53 2025 +0300
+
+    Merge pull request #26 from BEST-Estonia/event-info-editor
+    
+    Implement dynamic About section CMS editor for admin dashboard
+
+[33mcommit 1692c4a174478b05f73f74b9808fd910e5fb1626[m[33m ([m[1;31morigin/event-info-editor[m[33m, [m[1;32mevent-info-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Tue Sep 23 15:31:02 2025 +0300
+
+    Implement dynamic About section CMS editor for admin dashboard
+    
+    - Added backend API and Prisma model for About section
+    - Created frontend service for About section API integration
+    - Built polished AboutEditor component with loading states and delayed save
+    - Updated admin dashboard to support editing event information
+    - Ensured public About section fetches live data from backend
+
+[33mcommit bb4182f3a2a37b97dda44b11b388be8e0cedbc56[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 19 11:18:59 2025 +0300
+
+    Default sponsors
+
+[33mcommit 7348f85bec77d1a836e89914b951000f80b98ded[m
+Merge: 61ec06b7 38d15669
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Fri Sep 19 02:26:05 2025 +0300
+
+    Merge pull request #25 from BEST-Estonia/gallery-admin-editor
+    
+    Gallery admin editor
+
+[33mcommit 38d15669936a0e9e409563b5b6361396127b77d6[m[33m ([m[1;31morigin/gallery-admin-editor[m[33m, [m[1;32mgallery-admin-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 19 02:24:14 2025 +0300
+
+    Implemented complete gallery management system with dynamic CMS
+    
+    Backend:
+    - Added GalleryImage model to Prisma schema with url, alt, caption fields
+    - Created galleryController with file upload, CRUD operations using multer
+    - Added gallery API routes (GET, POST, DELETE) with proper error handling
+    - Configured multer for gallery-specific storage in /uploads/gallery/
+    - Implemented file validation (image types, 10MB limit) and cleanup
+    
+    Frontend:
+    - Created galleryService with TypeScript interfaces for API integration
+    - Built beautiful GalleryEditor component with drag-drop file upload
+    - Added image preview, alt text, and caption form fields
+    - Implemented responsive grid display with delete functionality
+    - Integrated gallery management into AdminDashboard navigation
+    
+    Dynamic Gallery:
+    - Convert static Gallery component to use dynamic API data
+    - Add loading states, error handling, and empty state displays
+    - Maintain carousel functionality with keyboard navigation
+    - Preserve modal image viewer with next/previous controls
+    - Update image sources to use backend API URLs
+    
+    Features:
+    - Complete CRUD operations for gallery images
+    - File upload with validation and preview
+    - Accessibility support with alt text
+    - Responsive design matching existing UI patterns
+    - Real-time updates from admin to live website
+    - Toast notifications and proper error handling
+
+[33mcommit 5f41c705f810d838f5003f204f47bc0863af7b03[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Thu Sep 18 21:37:26 2025 +0300
+
+    Gallery Backend Controller setup + testing using Postman
+
+[33mcommit 61ec06b7c2db1f41c4cf3fe66e7a8bcca8a772b0[m
+Merge: 53dec165 96ff5ff6
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Wed Sep 17 19:54:01 2025 +0300
+
+    Merge pull request #24 from BEST-Estonia/about-section-editor
+    
+    Added comprehensive introduction section editor with admin dashboard
+
+[33mcommit 96ff5ff691f0befe0b674cd56244ed7130e39ab3[m[33m ([m[1;31morigin/about-section-editor[m[33m, [m[1;32mabout-section-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Tue Sep 16 00:57:16 2025 +0300
+
+    Added comprehensive introduction section editor with admin dashboard
+    
+    - Implement IntroductionEditor component with full CRUD functionality
+    - Add form validation and error handling for introduction content
+    - Support editing of title, description, and feature items
+    - Include feature icon preview with Image component
+    - Add loading states, success/error notifications, and user feedback
+    - Implement default introduction creation when content not found
+    - Add responsive grid layout for feature editing cards
+    - Integrate with introduction service API for data persistence
+
+[33mcommit 53dec165ef94d78b152eebdfc417f4a76539eb8e[m
+Merge: 97a7fb55 e1d68a31
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Sun Sep 14 15:53:34 2025 +0300
+
+    Merge pull request #23 from BEST-Estonia/sponsors-editor
+    
+    Added Sponsor CMS functionality
+
+[33mcommit e1d68a317f58ab45654518f2c54ca125e0dcef89[m[33m ([m[1;31morigin/sponsors-editor[m[33m, [m[1;32msponsors-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Sun Sep 14 15:17:46 2025 +0300
+
+    Added Sponsor CMS functionality
+    
+    - Created Sponsor model in Prisma schema with extended website URL field
+    - Added backend API routes for sponsor management (GET, POST, DELETE)
+    - Implemented sponsorController for handling CRUD operations
+    - Created frontend service for API communication
+    - Updated Sponsors component to display dynamic sponsor data
+    - Added SponsorEditor component for admin dashboard
+    - Fixed image loading issues with URL path handling
+    - Added error handling and validation
+
+[33mcommit 97a7fb5543a059edb0f00939833d2288a341851f[m
+Merge: e5c586ab c83a12bf
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Sat Sep 13 13:53:55 2025 +0300
+
+    Merge pull request #22 from BEST-Estonia/hero-section-backend
+    
+    Hero section backend finished with CMS features
+
+[33mcommit c83a12bf33a1e1e6c673265af3298556781e733b[m[33m ([m[1;31morigin/hero-section-backend[m[33m, [m[1;32mhero-section-backend[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Sat Sep 13 13:37:12 2025 +0300
+
+    Implement ed Hero section CMS with live preview. Finished.
+    
+    - Added image upload functionality with improved UI
+    - Configured Next.js for external image domains
+    - Fixed image loading issues and implement proper fallbacks
+    - Created live preview of Hero section with real-time updates
+    - Improve file input field with custom styling and better UX
+    - Added validation for image uploads with proper error handling
+    
+    The Hero section can now be fully edited through the admin dashboard
+    with changes immediately reflected on the public-facing homepage.
+
+[33mcommit b8f413c7b5e365bb83f70d3913c9fda43d12c952[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Thu Sep 11 23:39:44 2025 +0300
+
+    Enabled dynamic backend-driven Hero section editing and live site updates
+    
+    - Refactored Hero section to fetch and display content from backend API
+    - Implemented HeroEditor dashboard to update hero data via backend
+    - Added immediate preview and homepage sync after editing
+    - Fixed image fallback logic for missing backgrounds
+    - Homepage now reflects all admin dashboard changes without code edits
+
+[33mcommit e5c586ab9d597a5fb73b6accab87fe39ee974dfa[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Wed Sep 10 10:38:14 2025 +0300
+
+    Deleted file
+
+[33mcommit 71242fd92699a7c6986381000753db2c48b240fb[m
+Merge: 2a950a97 ca06d698
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Wed Sep 10 10:36:28 2025 +0300
+
+    Merge pull request #21 from BEST-Estonia/hero-section-editor
+    
+    Hero section editor setup + backend initial setup
+
+[33mcommit ca06d698750cf01b77c0c02e6b12d4845922a489[m[33m ([m[1;31morigin/hero-section-editor[m[33m, [m[1;32mhero-section-editor[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Tue Sep 9 13:38:46 2025 +0300
+
+    Implemented Hero Section CMS backend with PostgreSQL
+    
+    - Add HeroSection model to Prisma schema with full content fields
+    - Create heroController with GET/PUT endpoints and Zod validation
+    - Integrate Hero routes into existing Express API structure
+    - Configure Docker PostgreSQL on port 5433 to avoid conflicts
+    - Add professional error handling and CORS configuration
+    - Implement upsert logic for single hero section management
+    - Set up development environment with proper .env configuration
+    
+    API Endpoints:
+    - GET /api/hero - Fetch hero section data
+    - PUT /api/hero - Update hero section with validation
+    
+    Ready for frontend integration and real-time content management.
+
+[33mcommit 1a54d0c99fae5492e570e75d08651e7ff2216b1b[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Mon Sep 8 21:09:57 2025 +0300
+
+    Hero section initial structure complete with previews. Next step: integrate the backend and API
+
+[33mcommit 2a950a9706516528c61ecb1e63c74bd5b679b574[m
+Merge: b93f6350 858e7eaa
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Fri Sep 5 01:39:59 2025 +0300
+
+    Merge pull request #20 from BEST-Estonia/admin-dash-home
+    
+    Hero Section Editor setup and trial
+
+[33mcommit 858e7eaaeb7f09d9bb199531e5c67602491d1426[m[33m ([m[1;31morigin/admin-dash-home[m[33m, [m[1;32madmin-dash-home[m[33m)[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 5 01:39:03 2025 +0300
+
+    Hero Section Editor setup and trial
+
+[33mcommit b93f63505a2290b6d96bf8e910d3d35358d3b2fb[m
+Merge: 22f4b743 74a256fd
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Fri Sep 5 01:08:32 2025 +0300
+
+    Merge pull request #19 from BEST-Estonia/admin-dash-home
+    
+    Admin Dashboard Home and sections completed
+
+[33mcommit 74a256fd2eb050282007dc46623fa6299c35f79d[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 5 01:01:36 2025 +0300
+
+    Icon change for Gallery
+
+[33mcommit b8aa66aa95a183dbeb62c90e4f18a4d6d8dc5487[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 5 00:58:23 2025 +0300
+
+    Logo update
+
+[33mcommit f911275300b7c2cd3bfdcf900335733f0c96ee12[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Fri Sep 5 00:53:52 2025 +0300
+
+    Home Admin Dashboard completed
+
+[33mcommit 4d6fc2ddc9b017ae28773827102511a3577edd6b[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Thu Sep 4 23:52:41 2025 +0300
+
+    Admin dashboard home page intial structure
+
+[33mcommit 22f4b7438f34b460a4d63f05788d032efece9b77[m
+Merge: 9713f28f 7fb68817
+Author: Roger Purtsak <rogerpurtsak10@gmail.com>
+Date:   Thu Sep 4 10:38:06 2025 +0300
+
+    Merge pull request #18 from BEST-Estonia/gallery-viewimage
+    
+    gallery viewimage modification
+
+[33mcommit 7fb68817951b84b5ff22ca788d63c3641a7c60ae[m[33m ([m[1;31morigin/gallery-viewimage[m[33m)[m
+Author: rogerpurtsak <rogerpurtsak10@gmail.com>
+Date:   Thu Sep 4 10:37:34 2025 +0300
+
+    gallery viewimage modification
+
+[33mcommit 47037517dbb45b87903c962cccd65ebc30e5ac8d[m
+Author: Nadim Metwalli <nadimmetwalli@gmail.com>
+Date:   Thu Sep 4 01:27:48 2025 +0300
+
+    Sidebar navigation finished
+
+[33mcommit 9713f28f7de4d25e50fd93ad5c690d8443631738[m
+Merge: 3926213c 0a997f9a
+Author: Nadim Metwalli <62930417+nadimmetwalli@users.noreply.github.com>
+Date:   Wed Sep 3 18:50:30 2025 +0300
+
+    Merge pull request #17 from BEST-Estonia/admin-login
+    
+    Admin login done

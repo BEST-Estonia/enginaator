@@ -350,7 +350,7 @@ const AdminDashboard = () => {
             {/* Project Members Management Editor */}
             {activeSection === 'team' && (
               <ProjectMemberEditor setActiveSection={setActiveSection} />
-            {/* Registrations Table */}
+            )}
             {activeSection === 'registrations' && (
               <RegistrationsTable />
             )}
