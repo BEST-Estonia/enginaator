@@ -22,14 +22,14 @@ const getHeroSection = async (req, res) => {
             orderBy: {updatedAt: 'desc'}
         });
 
-        // If no data exists, create default
+        // If no data exists, create default with Cloudinary image
         if (!heroData) {
             heroData = await prisma.heroSection.create({
                 data: {
                     dateText: "17-20 APRILL 2025",
                     mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS",
                     eventDate: "April 17, 2026 00:00:00",
-                    backgroundImage: "/assets/hero-img.jpg",
+                    backgroundImage: "https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759439184/hero-img_anlffe.jpg",
                     eventDateInfo: "17-20. aprill 2026",
                     location: "TalTech",
                     audience: "Insenerihuvilistele noortele",

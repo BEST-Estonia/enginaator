@@ -77,4 +77,31 @@ router.post('/projectMembers', upload.single('image'), projectTeamController.cre
 router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
 router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
 
+// Hero image upload route (add this with your other routes)
+const heroImageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'enginaator/hero',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+  },
+});
+
+// Hero image upload endpoint
+router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No file uploaded' });
+    }
+    
+    res.json({
+      success: true,
+      url: req.file.path,
+      message: 'Hero image uploaded successfully'
+    });
+  } catch (error) {
+    console.error('Hero image upload error:', error);
+    res.status(500).json({ success: false, error: 'Failed to upload hero image' });
+  }
+});
+
 module.exports = router;

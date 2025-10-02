@@ -25,6 +25,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [previewKey, setPreviewKey] = useState(Date.now()); // Force re-render of preview
 
   // Fetch hero data on mount
@@ -98,22 +99,17 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       return;
     }
 
-    // Preview URL for immediate feedback (just for UI)
-    const previewUrl = URL.createObjectURL(file);
-    setHeroData(prev => ({...prev, backgroundImage: previewUrl }));
-    
     try {
-      setIsSaving(true);
+      setIsUploading(true);
       
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('image', file);
       
-      // Upload the image
-      const uploadRes = await fetch(`${API_URL}/api/upload`, {
+      // Upload the image to Cloudinary via hero upload endpoint
+      const uploadRes = await fetch(`${API_URL}/api/hero/upload`, {
         method: 'POST',
         body: formData,
-        // Don't set Content-Type header; browser will set it with boundary for multipart/form-data
       });
       
       if (!uploadRes.ok) {
@@ -125,15 +121,12 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       const uploadResult = await uploadRes.json();
       
       if (uploadResult.success) {
-        // Log for debugging
-        console.log("Upload successful, received URL:", uploadResult.url);
-        
-        // Update hero data with the real URL from the server
+        // Update hero data with the Cloudinary URL
         setHeroData(prev => ({...prev, backgroundImage: uploadResult.url}));
         
         toast({
           title: "Success!",
-          description: "Image uploaded successfully",
+          description: "Hero image uploaded successfully",
         });
       } else {
         throw new Error(uploadResult.error || "Upload failed");
@@ -146,18 +139,8 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
         description: "Failed to upload image. Please try again.",
         variant: "destructive"
       });
-      
-      // Revert to previous image URL on error
-      setHeroData(prev => ({
-        ...prev,
-        backgroundImage: prev.backgroundImage.startsWith('blob:') 
-          ? '' // Reset to empty to trigger fallback
-          : prev.backgroundImage
-      }));
     } finally {
-      // Release object URL to avoid memory leaks
-      URL.revokeObjectURL(previewUrl);
-      setIsSaving(false);
+      setIsUploading(false);
     }
   };
 
@@ -293,7 +276,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span className="text-gray-600 group-hover:text-gray-700">
-                          {heroData.backgroundImage ? 'Change Background Image' : 'Select Background Image'}
+                          {isUploading ? 'Uploading...' : (heroData.backgroundImage ? 'Change Background Image' : 'Select Background Image')}
                         </span>
                       </span>
                     </label>
@@ -302,34 +285,41 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
                       type='file'
                       accept='image/*'
                       onChange={handleFileChange}
-                      className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+                      disabled={isUploading}
+                      className='absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed'
                     />
                   </div>
                   
-                  {/* File name display - shows when a file is selected */}
+                  {/* Current image preview */}
                   {heroData.backgroundImage && (
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-sm text-gray-600 truncate">
-                        {heroData.backgroundImage.split('/').pop() || 'Image selected'}
-                      </span>
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-2">Current background image:</p>
+                      <div className="h-32 flex items-center justify-center">
+                        <img
+                          src={heroData.backgroundImage}
+                          alt="Background preview"
+                          className="max-h-28 object-contain rounded"
+                        />
+                      </div>
                     </div>
                   )}
                   
-                  <p className="text-sm text-gray-500 mt-1">Upload JPG, PNG, or WebP. Max size: 5MB</p>
+                  <p className="text-sm text-gray-500 mt-1">Upload JPG, PNG, or WebP. Max size: 5MB. Images will be stored on Cloudinary.</p>
                 </div>
               </div>
             </div>
             <div className="mt-6 flex justify-between items-center">
               <div>
-                {isSaving && <span className="text-gray-500">Saving changes...</span>}
+                {(isSaving || isUploading) && (
+                  <span className="text-gray-500">
+                    {isUploading ? 'Uploading image...' : 'Saving changes...'}
+                  </span>
+                )}
               </div>
               <button
                 onClick={handleSaveChanges}
-                disabled={isSaving}
-                className={`bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+                disabled={isSaving || isUploading}
+                className={`bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors ${(isSaving || isUploading) ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>

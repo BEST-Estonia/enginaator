@@ -1,11 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { Member } from './types';
+import { ProjectMember } from '@/services/projectMemberService'; // Import the correct interface
 
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  member: Member;
+  member: ProjectMember; // Use ProjectMember instead of Member
 }
 
 const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, member }) => {
@@ -13,24 +13,21 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, member }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl p-8 sm:p-10 flex flex-col sm:flex-row gap-6
              transition-all duration-300 ease-out
              opacity-100 scale-100 animate-[fadeIn_0.3s_ease-out]">
 
         <button
-        onClick={onClose}
-        className="absolute top-0 rounded-r-xl right-0 h-full w-12 bg-[hsl(var(--enginaator-red))] flex items-center justify-center text-white text-2xl hover:bg-red-700 transition-colors duration-200 cursor-pointer"
-        aria-label="Close modal"
+          onClick={onClose}
+          className="absolute top-0 rounded-r-xl right-0 h-full w-12 bg-[hsl(var(--enginaator-red))] flex items-center justify-center text-white text-2xl hover:bg-red-700 transition-colors duration-200 cursor-pointer"
+          aria-label="Close modal"
         >
-        ✕
+          ✕
         </button>
-
-
 
         <div className="flex-shrink-0 mx-auto sm:mx-0">
           <Image
-            src={member.image}
+            src={member.imageUrl} // Changed from member.image to member.imageUrl
             alt={member.name}
             width={200}
             height={260}
