@@ -1,5 +1,6 @@
-import HomeDash from './AdminDashboard'
+"use client";
+import AdminDashboard from "./AdminDashboard";
 
-export default function LoginPage() {
-  return <HomeDash />
+export default function DashboardPage() {
+  return <AdminDashboard />;
 }
