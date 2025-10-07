@@ -14,42 +14,57 @@ services:
     restart: unless-stopped
     networks:
       - enginaator-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U enginaator_user -d enginaator_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  # Backend API
+  # Backend API (Express + Prisma)
   backend:
-    build: ./backend
+    image: node:20-alpine
     container_name: enginaator-backend
-    ports:
-      - "8000:8000"
+    working_dir: /app
+    command: sh -c "npm ci && npx prisma generate && npx prisma migrate deploy && npm run dev"
     environment:
-      - DATABASE_URL=postgresql://enginaator_user:Enginaator2025!@postgres:5432/enginaator_db
-      - NODE_ENV=development
+      DATABASE_URL: postgresql://postgres.sdmufhkqnralhvjdewbp:enginaator123@aws-1-eu-north-1.pooler.supabase.com:5432/postgres?sslmode=require
+      NODE_ENV: development
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     volumes:
       - ./backend:/app
-      - /app/node_modules
+      - backend_node_modules:/app/node_modules
+    ports:
+      - "8000:8000"
     networks:
       - enginaator-network
 
-  # Frontend
+  # Frontend (Next.js)
   frontend:
-    build: ./frontend
+    image: node:20-alpine
     container_name: enginaator-frontend
-    ports:
-      - "3000:3000"
+    working_dir: /app
+    # Next dev server
+    command: sh -c "npm ci && npm run dev"
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000
+
+      NEXT_PUBLIC_API_URL: http://localhost:8000
     depends_on:
-      - backend
+      backend:
+        condition: service_started
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
     networks:
       - enginaator-network
 
 volumes:
   postgres_data:
+  backend_node_modules:
+  frontend_node_modules:
 
 networks:
   enginaator-network:
