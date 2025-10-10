@@ -50,6 +50,7 @@ export async function updateIntroduction(data: Introduction): Promise<Introducti
 
 // Create default introduction data in the backend
 export async function createDefaultIntroduction(): Promise<Introduction> {
+    console.log(`${API_URL}/introduction/default`)
     const response = await fetch(`${API_URL}/introduction/default`, {
         method: 'POST',
         headers: {

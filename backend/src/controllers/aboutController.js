@@ -42,10 +42,11 @@ exports.getAbout = async (req, res) => {
         }
 
         res.json(about);
-    } catch (error) {
-        console.error('Error fetching about:', error);
-        res.status(500).json({ error: 'Failed to fetch about content' });
-    }
+        } catch (error) {
+        console.error('GET /api/aboutSection error:', error?.message, error?.stack);
+        return res.status(500).json({ error: 'Failed to fetch about content' });
+        }
+
 }
 
 exports.updateAbout = async (req, res) => {
