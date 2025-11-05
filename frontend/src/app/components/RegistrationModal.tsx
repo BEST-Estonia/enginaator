@@ -375,7 +375,6 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
                           Luban, et minu isikuandmeid kasutatakse Enginaator 2025 korraldamise jaoks /
                           I agree that my personal data will be used for the organization of Enginaator 2025
                         </label>
-
                         </div>
                       </div>
                     </div>

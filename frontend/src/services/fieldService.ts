@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface Field {
   id: string;
@@ -11,7 +11,7 @@ export interface Field {
 
 //Get all fields
 export async function getFields(): Promise<Field[]> {
-    const response = await fetch(`${API_URL}/fields`);
+    const response = await fetch(`${API_URL}/api/fields`);
     if (!response.ok) throw new Error('Failed to fetch fields');
     return response.json();
 }

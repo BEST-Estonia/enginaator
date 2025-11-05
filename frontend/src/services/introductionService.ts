@@ -19,7 +19,7 @@ export interface Introduction {
 
 //Fetch introduction data from the backend
 export async function getIntroduction(): Promise<Introduction> {
-    const response = await fetch(`${API_URL}/introduction`);
+    const response = await fetch(`${API_URL}/api/introduction`);
 
     if (!response.ok) {
         if (response.status === 404) {

@@ -1,7 +1,18 @@
 const express = require('express');
 const router = express.Router();
+
+;(['get','post','put','delete','use']).forEach((m) => {
+  const orig = router[m].bind(router);
+  router[m] = function (path, ...handlers) {
+    try { console.log('[ROUTE]', m.toUpperCase(), path); } catch {}
+    return orig(path, ...handlers);
+  };
+});
+
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../utils/cloudinary');
+
 const teamController = require('../controllers/teamController');
 const { getHeroSection, updateHeroSection } = require('../controllers/heroController');
 const { uploadImage } = require('../controllers/uploadController');
@@ -11,93 +22,74 @@ const galleryController = require('../controllers/galleryController');
 const aboutController = require('../controllers/aboutController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../utils/cloudinary');
 const projectTeamController = require('../controllers/projectTeamController');
 
-
-// Configure multer storage
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'enginaator',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-  },
+  cloudinary,
+  params: { folder: 'enginaator', allowed_formats: ['jpg','png','jpeg','webp'] },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-// Team routes (with /teams prefix)
+// --- Teams ---
 router.post('/teams/register', teamController.registerTeam);
 router.get('/teams', teamController.getAllTeams);
 router.get('/teams/stats', teamController.getTeamStats);
 router.delete('/teams/:id', teamController.deleteTeam);
 
-// Hero Section Routes
+// --- Hero ---
 router.get('/hero', getHeroSection);
 router.put('/hero', updateHeroSection);
 
-// Upload routes
+// --- Upload ---
 router.post('/upload', uploadImage);
 
-// Sponsor routes
+// --- Sponsors ---
 router.get('/sponsors', sponsorController.getAllSponsors);
 router.post('/sponsors', upload.single('image'), sponsorController.createSponsor);
 router.delete('/sponsors/:id', sponsorController.deleteSponsor);
 
-
-// Introduction routes
+// --- Introduction ---
 router.get('/introduction', introductionController.getIntroduction);
 router.put('/introduction', introductionController.updateIntroduction);
 router.post('/introduction/default', introductionController.createDefaultIntroduction);
 
-//Gallery routes
+// --- Gallery ---
 router.get('/gallery', galleryController.getAllGalleryImages);
 router.post('/gallery', galleryController.createImage);
 router.delete('/gallery/:id', galleryController.deleteGalleryImage);
 
-//About Section routes
+// --- About Section ---
 router.get('/aboutSection', aboutController.getAbout);
 router.put('/aboutSection', aboutController.updateAbout);
 router.post('/aboutSection', aboutController.createDefaultAbout);
 
-//Main Sponsors routes
+// --- Main Sponsors ---
 router.get('/mainSponsors', mainSponsorController.getMainSponsors);
 router.post('/mainSponsors', upload.single('image'), mainSponsorController.createMainSponsor);
 router.put('/mainSponsors/:id', mainSponsorController.updateMainSponsor);
 router.delete('/mainSponsors/:id', mainSponsorController.deleteMainSponsor);
 
-// Field routes
+// --- Fields ---
 router.get('/fields', fieldController.getFields);
 router.post('/fields', fieldController.createField);
 router.put('/fields/:id', fieldController.updateField);
 router.delete('/fields/:id', fieldController.deleteField);
 
+// --- Project Members ---
 router.get('/projectMembers', projectTeamController.getProjectMembers);
 router.post('/projectMembers', upload.single('image'), projectTeamController.createProjectMember);
 router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
 router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
 
-// Hero image upload route (add this with your other routes)
+// --- Hero image upload ---
 const heroImageStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'enginaator/hero',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-  },
+  cloudinary,
+  params: { folder: 'enginaator/hero', allowed_formats: ['jpg','png','jpeg','webp'] },
 });
-
-// Hero image upload endpoint
 router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'), (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, error: 'No file uploaded' });
-    }
-    
-    res.json({
-      success: true,
-      url: req.file.path,
-      message: 'Hero image uploaded successfully'
-    });
+    if (!req.file) return res.status(400).json({ success: false, error: 'No file uploaded' });
+    res.json({ success: true, url: req.file.path, message: 'Hero image uploaded successfully' });
   } catch (error) {
     console.error('Hero image upload error:', error);
     res.status(500).json({ success: false, error: 'Failed to upload hero image' });

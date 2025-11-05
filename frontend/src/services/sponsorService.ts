@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //Define the API URL
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface Sponsor {
     id: string;
@@ -19,7 +19,7 @@ export interface Sponsor {
  */
 export const fetchSponsors = async (): Promise<Sponsor[]> => {
   try {
-    const response = await axios.get(`${API_URL}/sponsors`);
+    const response = await axios.get(`${API_URL}/api/sponsors`);
     return response.data;
   } catch (error) {
     console.error('Error fetching sponsors:', error);

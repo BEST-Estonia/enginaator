@@ -41,7 +41,7 @@ export async function fetchTeams(opts: {
   if (q && q.trim()) params.set("q", q.trim());
   if (typeof year === "number") params.set("year", String(year));
 
-  const url = `${BASE}/teams${params.toString() ? `?${params.toString()}` : ""}`;
+  const url = `${BASE}/api/teams${params.toString() ? `?${params.toString()}` : ""}`;
   if (process.env.NODE_ENV !== "production") console.log("[fetchTeams]", url);
 
   const res = await fetch(url, { cache: "no-store" });
