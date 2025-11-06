@@ -4,7 +4,7 @@ import { useToast } from '@/app/components/hooks/use-toast';
 import React, {useState, useEffect} from 'react';
 import Hero from "@/app/sections/Hero";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 interface HeroEditorProps {
   setActiveSection: (section: string) => void;
@@ -33,7 +33,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_URL}/api/hero`);
+        const res = await fetch(`${API_URL}/hero`);
         const data = await res.json();
         if (data.success && data.data) {
           setHeroData(data.data);
@@ -58,7 +58,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/hero`, {
+      const res = await fetch(`${API_URL}/hero`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(heroData)
@@ -107,7 +107,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ setActiveSection }) => {
       formData.append('image', file);
       
       // Upload the image to Cloudinary via hero upload endpoint
-      const uploadRes = await fetch(`${API_URL}/api/hero/upload`, {
+      const uploadRes = await fetch(`${API_URL}/hero/upload`, {
         method: 'POST',
         body: formData,
       });

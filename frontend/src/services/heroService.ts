@@ -1,6 +1,6 @@
 // Service for hero section API calls
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface HeroData {
   dateText: string;
@@ -17,7 +17,7 @@ export const heroService = {
   // Get hero data
   async getHeroData(): Promise<HeroData> {
     try {
-      const res = await fetch(`${API_URL}/api/hero`);
+      const res = await fetch(`${API_URL}/hero`);
       const data = await res.json();
       
       if (!data.success) {
@@ -34,7 +34,7 @@ export const heroService = {
   // Update hero data
   async updateHeroData(heroData: HeroData): Promise<HeroData> {
     try {
-      const res = await fetch(`${API_URL}/api/hero`, {
+      const res = await fetch(`${API_URL}/hero`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(heroData)
@@ -59,7 +59,7 @@ export const heroService = {
       const formData = new FormData();
       formData.append('image', file);
       
-      const res = await fetch(`${API_URL}/api/upload`, {
+      const res = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         body: formData
       });

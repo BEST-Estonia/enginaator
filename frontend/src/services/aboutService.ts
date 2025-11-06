@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface About {
     id: number,
@@ -9,7 +9,7 @@ export interface About {
 
 // Fetch about data from the backend
 export async function getAbout(): Promise<About> {
-    const response = await fetch(`${API_URL}/api/aboutSection`);
+    const response = await fetch(`${API_URL}/aboutSection`);
 
     if (!response.ok) {
         if (response.status === 404) {
@@ -23,7 +23,7 @@ export async function getAbout(): Promise<About> {
 
 // Update about data in the backend
 export async function updateAbout(data: About): Promise<About> {
-    const response = await fetch(`${API_URL}/api/aboutSection`, {
+    const response = await fetch(`${API_URL}/aboutSection`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export async function updateAbout(data: About): Promise<About> {
 
 // Create default about data in the backend
 export async function createDefaultAbout(): Promise<About> {
-    const response = await fetch(`${API_URL}/api/aboutSection`, {
+    const response = await fetch(`${API_URL}/aboutSection`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
