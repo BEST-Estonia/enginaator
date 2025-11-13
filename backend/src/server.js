@@ -6,14 +6,6 @@ const routes = require('./routes/routes');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-
-
-const about = require('./controllers/aboutController');
-app.get('/api/aboutSection', about.getAbout);
-app.post('/api/aboutSection', about.createDefaultAbout);
-app.put('/api/aboutSection', about.updateAbout);
-app.use(express.json());
-
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient({
   log: ['query','info','warn','error'],
