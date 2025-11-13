@@ -124,15 +124,6 @@ model Introduction {
   updatedAt   DateTime @updatedAt
 }
 
-model AboutSection {
-  id            String   @id @default(cuid())
-  kusContent    String   @db.Text
-  osalejadContent String @db.Text
-  auhinnadContent String @db.Text
-  createdAt     DateTime @default(now()) @db.Timestamptz
-  updatedAt     DateTime @updatedAt @db.Timestamptz
-}
-
 model Feature {
   id            Int         @id @default(autoincrement())
   title         String

@@ -14,7 +14,6 @@ import { IoMdImages } from "react-icons/io";
 import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
-import AboutEditor from './AboutEditor';
 import FieldEditor from './FieldEditor';
 import ProjectMemberEditor from './ProjectMemberEditor';
 import { fetchTeams } from '@/services/teamService';
@@ -114,16 +113,6 @@ const AdminDashboard = () => {
               </button>
 
               <button 
-                onClick={() => setActiveSection('about')}
-                className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
-                  activeSection === 'about' ? 'bg-red-50 text-red-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <span className="font-medium">About Section</span>
-              </button>
-
-              <button 
                 onClick={() => setActiveSection('fields')}
                 className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
                   activeSection === 'fields' ? 'bg-red-50 text-red-600'
@@ -131,16 +120,6 @@ const AdminDashboard = () => {
                 }`}
               >
                 <span className="font-medium">Fields Management</span>
-              </button>
-
-              <button 
-                onClick={() => setActiveSection('events')}
-                className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
-                  activeSection === 'events' ? 'bg-red-50 text-red-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <span className="font-medium">Event Information</span>
               </button>
             </div>
 
@@ -335,11 +314,6 @@ const AdminDashboard = () => {
             {/* Gallery Section Editor */}
             {activeSection === 'gallery' && (
               <GalleryEditor setActiveSection={setActiveSection} />
-            )}
-
-            {/* About Section Editor */}
-            {activeSection === 'events' && (
-              <AboutEditor setActiveSection={setActiveSection} />
             )}
 
             {/* Fields Management Editor */}

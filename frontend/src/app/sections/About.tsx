@@ -1,38 +1,23 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {MapPin, Users, Trophy} from 'lucide-react';
-import { getAbout, About as AboutType } from '@/services/aboutService';
 
 const About = () => {
-
-    const [about, setAbout] = useState<AboutType | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-    getAbout()
-      .then(data => setAbout(data))
-      .catch(() => setAbout(null))
-      .finally(() => setLoading(false));
-    }, []);
-    
-    if (loading) return <div>Loading...</div>;
-    if (!about) return <div>Event info not available.</div>;
-
     const sections = [
         {
             icon: MapPin,
             title: 'Kus',
-            content: about.kusContent
+            content: "Enginaator toimub TalTechis. Suurem osa võistlusest viiakse läbi tudengimaja aulas, kuid osalejate teekond viib neid ka muudesse ülikooli osadesse. Samuti on Tallinnast väljastpoolt tulevatel finalistidel võimalus ööbida 18. aprillil Hessnery Residentsis, mis asub Pärnu mnt. 453H. TalTechi campuselt (peatus Tehnikaülikool) liigub täpselt hotelli ette (peatus Pärnu maantee) buss nr.10."
         },
         {
             icon: Users,
             title: "Osalejad",
-            content: about.osalejadContent
+            content: "Võistlus toimub neljaliikmelistes tiimides, mis koosnevad 17-24 aastastest gümnasistidest, kutsekooli õpilastest ja tudengitest. Võivad olla segatiimid, aga ka kõik ühest haridusasutusest. Kui tiimiliiget veel ei ole, ei tasu meelt heita, sest korraldustiim aitab Sul leida võistluskaaslased!"
         },
         {
             icon: Trophy,
             title: "Auhinnad",
-            content: about.auhinnadContent
+            content: "Top 5 tiimile on tagatud koht TalTechis, ning finaali kolmele parimale tiimile on ligi 3000€ auhinnafond. Lisaks saavad osalejad eri auhindu ja meeneid meie ettevõtetelt ning sponsoritelt."
         }
     ];
   return (
