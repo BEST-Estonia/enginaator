@@ -4,7 +4,7 @@ import { useToast } from '@/app/components/hooks/use-toast';
 import React, {useState, useEffect} from 'react';
 import Hero from "@/app/sections/Hero";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface HeroEditorProps {
   setActiveSection: (section: string) => void;

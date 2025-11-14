@@ -127,7 +127,6 @@ async function handleExportExcel() {
         Field: t.field,
         "Leader Name": t.leaderName,
         "Leader Email": t.leaderEmail,
-        "Leader Phone": (t as any).leaderPhone ?? "",
         "Queue #": t.queueNo ?? "",
         Status: isW ? "WAITLIST" : "CONFIRMED",
         "Edition Year": t.edition?.year ?? "",
@@ -152,7 +151,7 @@ async function handleExportExcel() {
         "Member Phone": m.phone ?? "",
         Age: m.age ?? "",
         School: m.school ?? "",
-        "Shirt Size": (m as any).shirtSize ?? "",
+        "Shirt Size": m.shirtSize ?? "",
         Diet: m.diet ?? "",
         Accommodation: m.accommodation ? "Yes" : "No",
         Consent: m.consent ? "Yes" : "No",
@@ -407,7 +406,7 @@ async function load(p = page, query = q) {
                         if (!confirm(`Delete team "${t.name}"? This cannot be undone.`)) return;
                         try {
                           const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-                          const res = await fetch(`${base}/api/teams/${t.id}`, { method: "DELETE" });
+                          const res = await fetch(`${base}/teams/${t.id}`, { method: "DELETE" });
                           if (!res.ok && res.status !== 204) {
                             const msg = await res.text();
                             throw new Error(`Failed (${res.status}): ${msg}`);

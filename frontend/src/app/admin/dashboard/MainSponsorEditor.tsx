@@ -9,7 +9,7 @@ import {
   MainSponsor,
 } from "@/services/mainSponsorService";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const IMAGE_BASE_URL = BACKEND_URL.replace('/api', '');
 
 interface MainSponsorEditorProps {
