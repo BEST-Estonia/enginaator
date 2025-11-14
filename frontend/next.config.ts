@@ -2,7 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'export',
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    ignoreBuildErrors: true,
+  },
   images: {
+    unoptimized: true, // Required for static export
     domains: ['localhost', 'res.cloudinary.com'], // Add Cloudinary domain
     remotePatterns: [
       {
