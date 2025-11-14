@@ -77,7 +77,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     }
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/teams/register`,
+        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/teams/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

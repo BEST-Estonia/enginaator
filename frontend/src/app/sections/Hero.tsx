@@ -53,7 +53,7 @@ const Hero: React.FC<Partial<HeroProps>> = (props) => {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_URL}/api/hero`);
+        const res = await fetch(`${API_URL}/hero`);
         const data = await res.json();
         if (data.success && data.data) {
           setHeroData(data.data);
