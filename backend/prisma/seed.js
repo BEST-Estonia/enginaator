@@ -35,17 +35,7 @@ async function main() {
     }
   });
 
-  // Seed AboutSection (no image upload needed)
-  await prisma.aboutSection.create({
-    data: {
-      kusContent:
-        "Enginaator toimub TalTechis. Suurem osa võistlusest viiakse läbi tudengimaja aulas, kuid osalejate teekond viib neid ka muudesse ülikooli osadesse. Samuti on Tallinnast väljastpoolt tulevatel finalistidel võimalus ööbida 18. aprillil Hessnery Residentsis, mis asub Pärnu mnt. 453H. TalTechi campuselt (peatus Tehnikaülikool) liigub täpselt hotelli ette (peatus Pärnu maantee) buss nr.10.",
-      osalejadContent:
-        "Võistlus toimub neljaliikmelistes tiimides, mis koosnevad 17-24 aastastest gümnasistidest, kutsekooli õpilastest ja tudengitest. Võivad olla segatiimid, aga ka kõik ühest haridusasutusest. Kui tiimiliiget veel ei ole, ei tasu meelt heita, sest korraldustiim aitab Sul leida võistluskaaslased!",
-      auhinnadContent:
-        "Top 5 tiimile on tagatud koht TalTechis, ning finaali kolmele parimale tiimile on ligi 3000€ auhinnafond. Lisaks saavad osalejad eri auhindu ja meeneid meie ettevõtetelt ning sponsoritelt."
-    }
-  });
+  console.log('✅ Introduction seeded');
 
   // Seed Gallery Images (using Cloudinary URLs directly)
   const galleryImages = [
@@ -57,6 +47,7 @@ async function main() {
     { url: 'https://res.cloudinary.com/dbrjkyg3a/image/upload/v1759088399/5_gs51pz.jpg', alt: "Gallery 5", caption: "Võistluse hetk 5" }
   ];
   await prisma.galleryImage.createMany({ data: galleryImages });
+  console.log(' Gallery images seeded');
 
   // Seed Main Sponsors (using Cloudinary URLs directly)
   const mainSponsors = [
@@ -92,6 +83,7 @@ async function main() {
     }
   ];
   await prisma.mainSponsor.createMany({ data: mainSponsors });
+  console.log('✅ Main sponsors seeded');
 
   // Seed Fields (no image upload needed)
   await prisma.field.createMany({
@@ -118,6 +110,7 @@ async function main() {
       }
     ]
   });
+  console.log('✅ Fields seeded');
 
   // Seed Project Members (using Cloudinary URLs)
   const projectMembers = [
@@ -163,6 +156,7 @@ async function main() {
     }
   ];
   await prisma.projectMember.createMany({ data: projectMembers });
+  console.log('✅ Project members seeded');
 
   // Seed Hero Section (no image upload needed)
   await prisma.heroSection.create({
@@ -177,6 +171,8 @@ async function main() {
       duration: "4 päeva"
     }
   });
+  console.log('✅ Hero section seeded');
+  console.log('\n🎉 Database seeded successfully!');
 }
 
 main()
