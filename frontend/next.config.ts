@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: 'export',
+  // output: 'export', // Removed - using standard Next.js for dynamic admin routes
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true, // Keep unoptimized for compatibility
     domains: ['localhost', 'res.cloudinary.com'], // Add Cloudinary domain
     remotePatterns: [
       {
