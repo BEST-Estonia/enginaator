@@ -2,15 +2,17 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install only what's needed to generate Prisma Client
+# Copy package files
 COPY package*.json ./
+
+# Copy prisma schema BEFORE npm ci (needed for postinstall script)
+COPY prisma ./prisma
+
+# Install dependencies (this will run postinstall which does prisma generate)
 RUN npm ci
 
-# Copy app sources (incl. prisma/)
+# Copy rest of app sources
 COPY . .
-
-# Generate Prisma Client (uses prisma devDependency)
-RUN npx prisma generate
 
 # ---------- runtime stage ----------
 FROM node:20-alpine
