@@ -4,11 +4,13 @@ import Image from "next/image";
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useState, useEffect, useRef } from "react";
 import { useModal } from '../context/ModalContext';
+import { registrationSettingsService } from '@/services/registrationSettingsService';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [registrationOpen, setRegistrationOpen] = useState(true);
   const lastYRef = useRef(0);
   const { openModal } = useModal();
 
@@ -55,6 +57,19 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [menuOpen]);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const data = await registrationSettingsService.getRegistrationSettings();
+        setRegistrationOpen(Boolean(data.registrationOpen));
+      } catch (error) {
+        console.error('Failed to load registration settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
 
   const NAV = [
@@ -119,14 +134,16 @@ export default function Navbar() {
         </button>
       </div>
 
-      <div className="hidden md:block">
-        <button
-          onClick={openModal}
-          className="inline-block transform transition-all duration-300 hover:scale-105 text-white text-sm rounded-full px-6 py-2 border-2 border-white hover:bg-black hover:text-white hover:shadow-xl font-medium cursor-pointer"
-        >
-          Pane Kirja
-        </button>
-      </div>
+      {registrationOpen ? (
+        <div className="hidden md:block">
+          <button
+            onClick={openModal}
+            className="inline-block transform transition-all duration-300 hover:scale-105 text-white text-sm rounded-full px-6 py-2 border-2 border-white hover:bg-black hover:text-white hover:shadow-xl font-medium cursor-pointer"
+          >
+            Pane Kirja
+          </button>
+        </div>
+      ) : null}
 
       {/* Mobile drawer */}
         <div className={`fixed inset-0 z-50 ${menuOpen ? 'pointer-events-auto visible' : 'pointer-events-none invisible'}`}>
@@ -168,16 +185,18 @@ export default function Navbar() {
                 {label}
             </button>
             ))}
-            <button
-            onClick={() => {
-                setMenuOpen(false);
-                openModal();
-            }}
-            className="mt-4 block px-6 py-3 rounded-full text-white text-lg font-medium border-2 border-white text-center hover:bg-black transition-all duration-300"
-            style={{ transitionDelay: `${NAV.length * 40}ms` }}
-            >
-            Pane Kirja
-            </button>
+            {registrationOpen ? (
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  openModal();
+                }}
+                className="mt-4 block px-6 py-3 rounded-full text-white text-lg font-medium border-2 border-white text-center hover:bg-black transition-all duration-300"
+                style={{ transitionDelay: `${NAV.length * 40}ms` }}
+              >
+                Pane Kirja
+              </button>
+            ) : null}
         </nav>
         </div>
     </div>

@@ -172,6 +172,15 @@ async function main() {
     }
   });
   console.log('✅ Hero section seeded');
+
+  // Seed Site Settings (registration visible by default)
+  const existingSettings = await prisma.siteSetting.findFirst();
+  if (!existingSettings) {
+    await prisma.siteSetting.create({
+      data: { registrationOpen: true }
+    });
+    console.log('✅ Site settings seeded');
+  }
   console.log('\n🎉 Database seeded successfully!');
 }
 
