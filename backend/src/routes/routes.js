@@ -22,6 +22,7 @@ const galleryController = require('../controllers/galleryController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
 const projectTeamController = require('../controllers/projectTeamController');
+const settingsController = require('../controllers/settingsController');
 
 const storage = new CloudinaryStorage({
   cloudinary,
@@ -74,6 +75,10 @@ router.get('/projectMembers', projectTeamController.getProjectMembers);
 router.post('/projectMembers', upload.single('image'), projectTeamController.createProjectMember);
 router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
 router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
+
+// --- Settings ---
+router.get('/settings/registration', settingsController.getRegistrationSettings);
+router.put('/settings/registration', settingsController.updateRegistrationSettings);
 
 // --- Hero image upload ---
 const heroImageStorage = new CloudinaryStorage({

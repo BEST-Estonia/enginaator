@@ -163,3 +163,12 @@ model ProjectMember {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model SiteSetting {
+  id               String   @id @default(cuid())
+  registrationOpen Boolean  @default(true)
+  createdAt        DateTime @default(now()) @db.Timestamptz
+  updatedAt        DateTime @updatedAt @db.Timestamptz
+
+  @@map("site_settings")
+}

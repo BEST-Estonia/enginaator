@@ -18,6 +18,7 @@ import FieldEditor from './FieldEditor';
 import ProjectMemberEditor from './ProjectMemberEditor';
 import { fetchTeams } from '@/services/teamService';
 import RegistrationsTable from '@/app/components/RegistrationsTable';
+import RegistrationSettingsEditor from './RegistrationSettingsEditor';
 
 
 
@@ -196,6 +197,15 @@ const AdminDashboard = () => {
               >
                 <span className="font-medium">Team Registrations</span>
               </button>
+              <button 
+                onClick={() => setActiveSection('registrationSettings')}
+                className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                  activeSection === 'registrationSettings' ? 'bg-red-50 text-red-600'
+                  : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <span className="font-medium">Registration Visibility</span>
+              </button>
             </div>
           </div>
         </div>
@@ -327,6 +337,9 @@ const AdminDashboard = () => {
             )}
             {activeSection === 'registrations' && (
               <RegistrationsTable />
+            )}
+            {activeSection === 'registrationSettings' && (
+              <RegistrationSettingsEditor />
             )}
           </main>
         </div>
