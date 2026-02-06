@@ -131,6 +131,16 @@ const AdminDashboard = () => {
               </h3>
               <div className="space-y-1">
                 <button 
+                  onClick={() => setActiveSection('about')}
+                  className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                    activeSection === 'about' ? 'bg-red-50 text-red-600'
+                    : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-medium">Introduction</span>
+                </button>
+
+                <button 
                   onClick={() => setActiveSection('team')}
                   className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
                     activeSection === 'team' ? 'bg-red-50 text-red-600'
