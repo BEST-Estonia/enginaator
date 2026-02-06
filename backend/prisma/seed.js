@@ -27,7 +27,7 @@ async function main() {
           },
           {
             title: "Energia",
-            description: "40 tundi intensiivset ülesannete lahendamist",
+            description: "41 tundi intensiivset ülesannete lahendamist",
             iconPath: "/plug.png"
           }
         ]

@@ -40,7 +40,7 @@ exports.createDefaultIntroduction = async (req, res) => {
             },
             {
               title: 'Energia',
-              description: '17 tundi intensiivset inseneritööd',
+              description: '41 tundi intensiivset ülesannete lahendamist',
               iconPath: '/plug.png'
             }
           ]
