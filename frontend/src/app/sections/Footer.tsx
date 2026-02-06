@@ -35,14 +35,14 @@ const Footer = () => {
                 className="flex items-center space-x-3 text-gray-300 hover:text-[hsl(var(--enginaator-red))] transition-colors duration-200"
               >
                   <Mail className="w-4 h-4" />
-                  <span className="text-sm">info@enginaator.ee</span>
+                  <span className="text-sm">Projektijuht@enginaator.ee</span>
               </a>
               <a 
                 href="tel:+37256273153"
                 className="flex items-center space-x-3 text-gray-300 hover:text-[hsl(var(--enginaator-red))] transition-colors duration-200"
               >
                 <Phone className="w-4 h-4" />
-                <span className="text-sm">+372 56273153</span>
+                <span className="text-sm">+372 56827565</span>
               </a>
 
               <div className="flex items-center space-x-3 text-gray-300">
@@ -112,7 +112,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-[hsl(var(--enginaator-black-soft))] pt-8">
           <p className="text-center text-gray-400 text-sm">
-            © 2025 Enginaator. Kõik õigused kaitstud.
+            © 2026 Enginaator. Kõik õigused kaitstud.
           </p>
         </div>
       </div>
