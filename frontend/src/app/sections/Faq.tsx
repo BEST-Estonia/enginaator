@@ -19,7 +19,7 @@ const CATEGORIES: FAQCategory[] = [
       {
         question: "Kellega probleemide korral ühendust võtta?",
         answer:
-          "Probleemide või küsimuste korral võtta ühendust meie osalejate ja logistikajuhiga meili teel kertka@taltech.ee või helistage 56273153.",
+          "Probleemide või küsimuste korral võtta ühendust meie osalejate ja logistikajuhiga meili teel Logistikajuht@enginaator.ee või helistage +372 56827565.",
       },
       {
         question: "Kas ürituse ajal on võimalik magada?",
