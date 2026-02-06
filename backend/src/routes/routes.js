@@ -23,6 +23,7 @@ const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
 const projectTeamController = require('../controllers/projectTeamController');
 const settingsController = require('../controllers/settingsController');
+const aboutController = require('../controllers/aboutController');
 
 const storage = new CloudinaryStorage({
   cloudinary,
@@ -52,6 +53,10 @@ router.delete('/sponsors/:id', sponsorController.deleteSponsor);
 router.get('/introduction', introductionController.getIntroduction);
 router.put('/introduction', introductionController.updateIntroduction);
 router.post('/introduction/default', introductionController.createDefaultIntroduction);
+
+// --- About / Üritusest ---
+router.get('/about', aboutController.getAboutSection);
+router.put('/about', aboutController.updateAboutSection);
 
 // --- Gallery ---
 router.get('/gallery', galleryController.getAllGalleryImages);

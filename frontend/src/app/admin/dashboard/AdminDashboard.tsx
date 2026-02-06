@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { IoMdImages } from "react-icons/io";
 import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 import IntroductionEditor from './IntroductionEditor';
+import AboutEditor from './AboutEditor';
 import GalleryEditor from './GalleryEditor';
 import FieldEditor from './FieldEditor';
 import ProjectMemberEditor from './ProjectMemberEditor';
@@ -138,6 +139,16 @@ const AdminDashboard = () => {
                   }`}
                 >
                   <span className="font-medium">Introduction</span>
+                </button>
+
+                <button 
+                  onClick={() => setActiveSection('eventAbout')}
+                  className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                    activeSection === 'eventAbout' ? 'bg-red-50 text-red-600'
+                    : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-medium">Üritusest</span>
                 </button>
 
                 <button 
@@ -329,6 +340,11 @@ const AdminDashboard = () => {
             {/* Introduction/About Section Editor */}
             {activeSection === 'about' && (
               <IntroductionEditor setActiveSection={setActiveSection} />
+            )}
+
+            {/* Üritusest Section Editor */}
+            {activeSection === 'eventAbout' && (
+              <AboutEditor setActiveSection={setActiveSection} />
             )}
 
             {/* Gallery Section Editor */}
