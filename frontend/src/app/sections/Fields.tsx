@@ -1,14 +1,34 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type SVGProps } from 'react';
 import { Cpu, Cog, Building, Code } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { getFields, Field } from '@/services/fieldService';
+
+const DroneIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="9" y="9" width="6" height="6" rx="1" />
+    <path d="M12 4v3M12 17v3M4 12h3M17 12h3" />
+    <circle cx="6" cy="6" r="2" />
+    <circle cx="18" cy="6" r="2" />
+    <circle cx="6" cy="18" r="2" />
+    <circle cx="18" cy="18" r="2" />
+    <path d="M8 8l1.5 1.5M16 8l-1.5 1.5M8 16l1.5-1.5M16 16l-1.5-1.5" />
+  </svg>
+);
 
 const ICONS: Record<string, React.ElementType> = {
   Cpu,
   Cog,
   Building,
   Code,
+  Drone: DroneIcon,
+  Droonid: DroneIcon,
+};
+
+const getFieldIcon = (field: Field, className: string) => {
+  const IconComponent = ICONS[field.icon]
+    || (field.name.toLowerCase().includes('droon') ? DroneIcon : undefined);
+  return IconComponent ? <IconComponent className={className} /> : null;
 };
 
 const FieldsSection = () => {
@@ -47,10 +67,7 @@ const FieldsSection = () => {
                     : 'border-2 border-[hsl(var(--enginaator-red))] text-[hsl(var(--enginaator-red))] hover:bg-[hsl(var(--enginaator-red))] hover:text-white'
                 }`}
               >
-                {(() => {
-                  const IconComponent = ICONS[field.icon];
-                  return IconComponent ? <IconComponent className="w-5 h-5" /> : null;
-                })()}
+                {getFieldIcon(field, "w-5 h-5")}
                 <span>{field.name}</span>
               </Button>
             ))
@@ -65,10 +82,7 @@ const FieldsSection = () => {
             <div className="field-card animate-fade-in">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="bg-gradient-accent rounded-full w-12 h-12 flex items-center justify-center">
-                  {(() => {
-                    const IconComponent = ICONS[fields[activeField].icon];
-                    return IconComponent ? <IconComponent className="w-6 h-6 text-white" /> : null;
-                  })()}
+                  {getFieldIcon(fields[activeField], "w-6 h-6 text-white")}
                 </div>
                 <h3 className="text-2xl font-bold text-enginaator-black">
                   {fields[activeField].name}

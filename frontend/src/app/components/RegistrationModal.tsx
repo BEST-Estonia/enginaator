@@ -372,8 +372,8 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
                         />
                         <label htmlFor={`consent-${index}`} className="text-xs leading-5 cursor-pointer">
                           <span className="font-medium">Nõusolek *</span> —
-                          Luban, et minu isikuandmeid kasutatakse Enginaator 2025 korraldamise jaoks /
-                          I agree that my personal data will be used for the organization of Enginaator 2025
+                          Luban, et minu isikuandmeid kasutatakse Enginaator 2026 korraldamise jaoks /
+                          I agree that my personal data will be used for the organization of Enginaator 2026
                         </label>
                         </div>
                       </div>
