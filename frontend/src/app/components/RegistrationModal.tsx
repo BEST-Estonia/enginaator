@@ -244,7 +244,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
           {/* Team Members */}
           <div>
             <h3 className="text-xl font-semibold text-[hsl(var(--enginaator-black))] mb-6">
-              Tiimiliikmed
+              Tiimiliikmed (18–24-aastased)
             </h3>
             <div className="space-y-6">
               {formData.members.map((member, index) => (
@@ -372,8 +372,8 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
                         />
                         <label htmlFor={`consent-${index}`} className="text-xs leading-5 cursor-pointer">
                           <span className="font-medium">Nõusolek *</span> —
-                          Luban, et minu isikuandmeid kasutatakse Enginaator 2025 korraldamise jaoks /
-                          I agree that my personal data will be used for the organization of Enginaator 2025
+                          Luban, et minu isikuandmeid kasutatakse Enginaator 2026 korraldamise jaoks /
+                          I agree that my personal data will be used for the organization of Enginaator 2026
                         </label>
                         </div>
                       </div>

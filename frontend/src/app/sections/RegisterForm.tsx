@@ -140,7 +140,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
           {/* Team Members */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold text-[hsl(var(--enginaator-black))] mb-6">
-              Tiimiliikmed
+              Tiimiliikmed (18–24-aastased)
             </h3>
             <div className="space-y-6">
               {formData.members.map((member, index) => (
