@@ -3,6 +3,11 @@
 on:
   push:
     branches: ["main"]
+    paths:
+      - "backend/prisma/**"
+      - "backend/package.json"
+      - "backend/package-lock.json"
+      - ".github/workflows/prisma-migrate.yml"
   workflow_dispatch:
 
 permissions:
@@ -35,11 +40,6 @@ jobs:
       - name: Debug DB URL (safe)
         run: |
           node -e "const u=new URL(process.env.DATABASE_URL); console.log('user=',u.username,'host=',u.host,'db=',u.pathname)"
-
-      - name: Baseline existing schema (resolve migrations)
-        run: |
-          npx prisma migrate resolve --applied 0001_clean_init
-          npx prisma migrate resolve --applied 0002_site_settings
 
       - name: Prisma migrate deploy (direct)
         run: npx prisma migrate deploy
