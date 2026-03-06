@@ -173,3 +173,12 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+// Admin kasutajate mudel
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now()) @db.Timestamptz
+
+  @@map("admin_users")
+}

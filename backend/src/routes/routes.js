@@ -24,6 +24,9 @@ const fieldController = require('../controllers/fieldController');
 const projectTeamController = require('../controllers/projectTeamController');
 const settingsController = require('../controllers/settingsController');
 
+// Admin auth
+const adminAuthController = require('../controllers/adminAuthController');
+
 const storage = new CloudinaryStorage({
   cloudinary,
   params: { folder: 'enginaator', allowed_formats: ['jpg','png','jpeg','webp'] },
@@ -94,5 +97,8 @@ router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'
     res.status(500).json({ success: false, error: 'Failed to upload hero image' });
   }
 });
+
+// --- Admin login ---
+router.post('/admin/login', adminAuthController.login);
 
 module.exports = router;
