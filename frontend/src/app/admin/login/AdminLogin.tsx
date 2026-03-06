@@ -19,11 +19,15 @@ const AdminLogin = () => {
     setIsLoading(true);
     setError('');
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     try {
-      if (email === "admin@enginaator.com" && password === "admin123") {
-        localStorage.setItem('adminAuth', 'true');
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('adminToken', data.token);
         router.push('/admin/dashboard');
       } else {
         setError('Invalid email or password');

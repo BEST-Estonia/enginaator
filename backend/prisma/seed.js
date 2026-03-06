@@ -181,6 +181,24 @@ async function main() {
     });
     console.log('✅ Site settings seeded');
   }
+    // Seed admin user (if not exists)
+    const bcrypt = require('bcryptjs');
+    const adminEmail = 'admin@enginaator.com';
+    const adminPassword = 'admin123';
+    const adminHash = await bcrypt.hash(adminPassword, 10);
+    const existingAdmin = await prisma.adminUser.findUnique({ where: { email: adminEmail } });
+    if (!existingAdmin) {
+      await prisma.adminUser.create({
+        data: {
+          email: adminEmail,
+          password: adminHash,
+          role: 'admin',
+        }
+      });
+      console.log('✅ Admin user seeded');
+    } else {
+      console.log('ℹ️ Admin user already exists');
+    }
   console.log('\n🎉 Database seeded successfully!');
 }
 
