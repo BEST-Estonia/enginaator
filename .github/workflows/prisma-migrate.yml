@@ -32,6 +32,10 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Debug DB URL (safe)
+        run: |
+          node -e "const u=new URL(process.env.DATABASE_URL); console.log('user=',u.username,'host=',u.host,'db=',u.pathname)"
+
       - name: Baseline existing schema (resolve migrations)
         run: |
           npx prisma migrate resolve --applied 0001_clean_init
