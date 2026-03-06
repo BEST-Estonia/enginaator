@@ -3,11 +3,6 @@
 on:
   push:
     branches: ["main"]
-    paths:
-      - "backend/prisma/**"
-      - "backend/package.json"
-      - "backend/package-lock.json"
-      - ".github/workflows/prisma-migrate.yml"
   workflow_dispatch:
 
 permissions:
