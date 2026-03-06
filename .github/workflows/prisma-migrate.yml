@@ -4,9 +4,9 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "prisma/**"
-      - "package.json"
-      - "package-lock.json"
+      - "backend/prisma/**"
+      - "backend/package.json"
+      - "backend/package-lock.json"
       - ".github/workflows/prisma-migrate.yml"
   workflow_dispatch:
 
@@ -16,9 +16,13 @@ permissions:
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     env:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
       DATABASE_URL: ${{ secrets.DIRECT_URL }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,6 +32,7 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install deps
         run: npm ci
@@ -36,7 +41,7 @@ jobs:
         run: |
           npx prisma migrate resolve --applied 0001_clean_init
           npx prisma migrate resolve --applied 0002_site_settings
-          
+
       - name: Prisma migrate deploy (direct)
         run: npx prisma migrate deploy
 
