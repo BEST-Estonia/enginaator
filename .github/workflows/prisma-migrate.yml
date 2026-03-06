@@ -20,8 +20,8 @@ jobs:
       run:
         working-directory: backend
     env:
-      DIRECT_URL: ${{ secrets.DIRECT_URL }}
-      DATABASE_URL: ${{ secrets.DIRECT_URL }}
+      DIRECT_URL: ${{ secrets.MIGRATE_URL }}
+      DATABASE_URL: ${{ secrets.MIGRATE_URL }}
 
     steps:
       - name: Checkout
