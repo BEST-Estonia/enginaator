@@ -9,7 +9,7 @@ exports.login = async (req, res) => {
   if (!email || !password) return res.status(400).json({ error: 'Missing credentials' });
   const user = await prisma.adminUser.findUnique({ where: { email } });
   if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-  const valid = await bcrypt.compare(password, user.password);
+  const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
   res.json({ token });
