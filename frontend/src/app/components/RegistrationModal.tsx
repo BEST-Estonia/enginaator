@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { X, Check } from 'lucide-react';
+import { Turnstile } from "@marsidev/react-turnstile";
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -15,6 +16,11 @@ interface RegistrationModalProps {
 }
 
 const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
+
+  const handleClose = () => {
+  setCaptchaToken(null);
+  onClose();
+  };
   const [formData, setFormData] = useState({
     teamName: '',
     leaderName: '',
@@ -31,6 +37,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
 
   const fields = ['Elektroonika', 'Mehaanika', 'Ehitus', 'IT'];
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const { toast } = useToast();
 
@@ -87,6 +94,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
             leaderName: formData.leaderName,
             leaderEmail: formData.leaderEmail,
             leaderPhone: formData.leaderPhone,
+            turnstileToken: captchaToken,
                 members: cleanedMembers.map(m => ({
             name: m.name?.trim() || "",
             age: m.age?.trim() || "",
@@ -124,6 +132,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
 
 
         toast({ title: "Edukalt saadetud!", description: "Tiim registreeritud!" });
+        setCaptchaToken(null);
         onClose();
       } catch (err) {
         console.error(err);
@@ -153,7 +162,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
           <h2 className="text-3xl font-bold text-[hsl(var(--enginaator-black))]">
             Registreeri oma tiim
           </h2>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={handleClose}>
             <X className="w-6 h-6" />
           </Button>
         </div>
@@ -391,6 +400,22 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
             </p>
           </div>
 
+          <div className="pt-2">
+            <Label>Robotikaitse *</Label>
+            <div className="mt-3">
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={(token: string) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+                options={{
+                  theme: "light",
+                  size: "normal",
+                }}
+              />
+            </div>
+          </div>
+
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <button
@@ -405,7 +430,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
             </button>
             <button 
               type="button" 
-              onClick={onClose} 
+              onClick={handleClose} 
               className="flex-1 bg-white border border-gray-300 text-black font-medium py-3 rounded-md transition-colors hover:border-[#D12A2D] hover:text-[#D12A2D]"
             >
               Tühista
