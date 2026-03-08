@@ -15,7 +15,7 @@ async function ensureEditionForRegistration(inputYear) {
   return prisma.edition.upsert({
     where:  { year },
     create: { year, name: `Enginaator ${year}`, capacity: DEFAULT_CAPACITY },
-    update: {},
+    update: { capacity: DEFAULT_CAPACITY },
   });
 }
 
