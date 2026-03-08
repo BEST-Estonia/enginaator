@@ -2,6 +2,8 @@
 const { z } = require("zod");
 const { prisma, ensureEditionForRegistration } = require("../utils/edition");
 
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
 // lubatud valdkonnad (soovi korral tõsta configsse)
 const allowedFields = new Set(["Elektroonika", "Mehaanika", "Ehitus", "IT"]);
 
@@ -41,19 +43,66 @@ const RegistrationSchema = z.object({
   leaderName: z.string().trim().min(1).max(120),
   leaderEmail: z.string().email().max(255),
   leaderPhone: z.string().trim().max(20).optional().or(z.literal("")).transform(v => v || null),
+  turnstileToken: z.string().trim().min(1, "Missing Turnstile token"),
   members: z.array(MemberSchema).max(10).default([]),
 });
+
+async function verifyTurnstileToken(token, remoteip) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+
+  if (!secret) {
+    throw new Error("TURNSTILE_SECRET_KEY is missing");
+  }
+
+  const formData = new URLSearchParams();
+  formData.append("secret", secret);
+  formData.append("response", token);
+
+  if (remoteip) {
+    formData.append("remoteip", remoteip);
+  }
+
+  const response = await fetch(TURNSTILE_VERIFY_URL, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Turnstile verify failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
 
 // POST /api/teams/register
 exports.registerTeam = async (req, res) => {
   try {
     const parsed = RegistrationSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ error: "Validation failed", details: parsed.error.flatten() });
+      return res.status(400).json({
+        error: "Validation failed",
+        details: parsed.error.flatten(),
+      });
     }
+
     const data = parsed.data;
 
-    // puhasta liikmed (nagu sul oli)
+    const remoteip =
+      req.headers["cf-connecting-ip"] ||
+      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      req.ip;
+
+    const turnstileResult = await verifyTurnstileToken(data.turnstileToken, remoteip);
+
+    if (!turnstileResult.success) {
+      return res.status(400).json({
+        error: "CAPTCHA kontroll ebaõnnestus",
+        details: {
+          turnstile: turnstileResult["error-codes"] || ["unknown-turnstile-error"],
+        },
+      });
+    }
+
     const membersClean = (data.members || [])
       .filter(m =>
         (m.name && m.name.trim()) ||
@@ -77,22 +126,18 @@ exports.registerTeam = async (req, res) => {
         diet: m.diet,
       }));
 
-    // ⬇️ CRITICAL: queueNo lukustamine transaktsiooniga + Edition sidumine
     const result = await prisma.$transaction(async (tx) => {
-      // leia/loo oluline Edition (kas body.year või aktiivne)
       const ed0 = await ensureEditionForRegistration(data.year);
 
-      // atomaarne increment → saame järgmise järjekorranumbri
       const ed = await tx.edition.update({
         where: { id: ed0.id },
-        data:  { nextQueue: { increment: 1 } },
-        select:{ id: true, capacity: true, nextQueue: true, year: true },
+        data: { nextQueue: { increment: 1 } },
+        select: { id: true, capacity: true, nextQueue: true, year: true },
       });
 
-      // loo tiim fikseeritud queueNo-ga
       const created = await tx.team.create({
         data: {
-          name: data.teamName,         // FRONT teamName → DB name
+          name: data.teamName,
           field: data.field,
           leaderName: data.leaderName,
           leaderEmail: data.leaderEmail,
@@ -103,7 +148,7 @@ exports.registerTeam = async (req, res) => {
         },
         include: {
           edition: { select: { year: true, capacity: true } },
-          _count:  { select: { members: true } },
+          _count: { select: { members: true } },
           members: true,
         },
       });
@@ -115,8 +160,15 @@ exports.registerTeam = async (req, res) => {
     return res.status(201).json(result);
   } catch (e) {
     console.error("registerTeam error:", e, e?.code, e?.meta);
-    if (e?.code === "P2002") return res.status(409).json({ error: "Team name already exists (this year)" });
-    if (e?.code === "P2025") return res.status(404).json({ error: "Team not found" });
+
+    if (e?.code === "P2002") {
+      return res.status(409).json({ error: "Team name already exists (this year)" });
+    }
+
+    if (e?.code === "P2025") {
+      return res.status(404).json({ error: "Team not found" });
+    }
+
     return res.status(500).json({ error: "Internal error" });
   }
 };
