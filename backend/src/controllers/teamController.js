@@ -1,6 +1,8 @@
 // backend/src/controllers/teamController.js
 const { z } = require("zod");
 const { prisma, ensureEditionForRegistration } = require("../utils/edition");
+const { sendEmail } = require("../utils/mailer");
+const { buildRegistrationEmailPayload } = require("../utils/registrationEmail");
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
@@ -156,6 +158,16 @@ exports.registerTeam = async (req, res) => {
       const isWaitlisted = created.queueNo > ed.capacity;
       return { team: created, isWaitlisted, capacity: ed.capacity };
     });
+
+    try {
+      const mailPayload = buildRegistrationEmailPayload(result);
+      await sendEmail({
+        to: result.team.leaderEmail,
+        ...mailPayload,
+      });
+    } catch (mailError) {
+      console.error("registerTeam confirmation email error:", mailError?.message || mailError);
+    }
 
     return res.status(201).json(result);
   } catch (e) {
