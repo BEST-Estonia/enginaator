@@ -401,7 +401,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
           </div>
 
           <div className="pt-2">
-            <Label>Robotikaitse *</Label>
+            <Label>Botikaitse *</Label>
             <div className="mt-3">
               <Turnstile
                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
