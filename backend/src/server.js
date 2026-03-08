@@ -15,7 +15,7 @@ process.on('unhandledRejection', (r) => console.error('[unhandledRejection]', r)
 process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
 
 
-// Enable CORS
+// Enable CORSss
 app.use(cors());
 
 // Parse JSON requests
