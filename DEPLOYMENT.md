@@ -49,11 +49,16 @@ The `render.yaml` file at the root of the repository defines both services. Rend
    CLOUDINARY_CLOUD_NAME=<your_cloudinary_name>
    CLOUDINARY_API_KEY=<your_cloudinary_key>
    CLOUDINARY_API_SECRET=<your_cloudinary_secret>
+   GMAIL_USER=<your_gmail_address>
+   GMAIL_APP_PASSWORD=<your_gmail_app_password>
+   EMAIL_FROM=<sender_email_or_name_and_email>
    DEFAULT_EDITION_CAPACITY=32
    EDITION_ROLLOVER_MONTH=9
    FRONTEND_URL=<your_frontend_url_after_deployment>
    ALLOWED_ORIGINS=<your_frontend_url_after_deployment>
    ```
+
+   Note: backend mailer uses Nodemailer `service: "gmail"` preset.
 
 4. **Database Setup** (if using Render PostgreSQL):
    - Create a new PostgreSQL database in Render
