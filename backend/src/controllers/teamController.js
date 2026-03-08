@@ -131,11 +131,19 @@ exports.registerTeam = async (req, res) => {
     const result = await prisma.$transaction(async (tx) => {
       const ed0 = await ensureEditionForRegistration(data.year);
 
-      const ed = await tx.edition.update({
+      const ed = await tx.edition.findUnique({
         where: { id: ed0.id },
-        data: { nextQueue: { increment: 1 } },
-        select: { id: true, capacity: true, nextQueue: true, year: true },
+        select: { id: true, capacity: true, year: true },
       });
+
+      if (!ed) {
+        throw new Error("Edition not found after ensureEditionForRegistration");
+      }
+
+      const teamsInEdition = await tx.team.count({
+        where: { editionId: ed.id },
+      });
+      const nextQueueNo = teamsInEdition + 1;
 
       const created = await tx.team.create({
         data: {
@@ -145,7 +153,7 @@ exports.registerTeam = async (req, res) => {
           leaderEmail: data.leaderEmail,
           leaderPhone: data.leaderPhone,
           editionId: ed.id,
-          queueNo: ed.nextQueue,
+          queueNo: nextQueueNo,
           members: membersClean.length ? { create: membersClean } : undefined,
         },
         include: {
@@ -255,7 +263,34 @@ exports.getTeamStats = async (_req, res) => {
 exports.deleteTeam = async (req, res) => {
   const { id } = req.params;
   try {
-    await prisma.team.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const existing = await tx.team.findUnique({
+        where: { id },
+        select: { editionId: true },
+      });
+
+      if (!existing) {
+        const err = new Error("Team not found");
+        err.code = "P2025";
+        throw err;
+      }
+
+      await tx.team.delete({ where: { id } });
+
+      const remaining = await tx.team.findMany({
+        where: { editionId: existing.editionId },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+        select: { id: true },
+      });
+
+      for (let i = 0; i < remaining.length; i += 1) {
+        await tx.team.update({
+          where: { id: remaining[i].id },
+          data: { queueNo: i + 1 },
+        });
+      }
+    });
+
     return res.status(204).send();
   } catch (e) {
     if (e?.code === "P2025") return res.status(404).json({ error: "Team not found" });
