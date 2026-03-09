@@ -134,6 +134,15 @@ model Feature {
   introduction  Introduction @relation(fields: [introductionId], references: [id])
 }
 
+model AboutSection {
+  id              String   @id @default(cuid())
+  kusContent       String   @db.Text
+  osalejadContent  String   @db.Text
+  auhinnadContent  String   @db.Text
+  createdAt        DateTime @default(now()) @db.Timestamptz
+  updatedAt        DateTime @updatedAt @db.Timestamptz
+}
+
 model MainSponsor {
   id           String   @id @default(cuid())
   sponsorName  String

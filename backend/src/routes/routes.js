@@ -18,6 +18,7 @@ const { getHeroSection, updateHeroSection } = require('../controllers/heroContro
 const { uploadImage } = require('../controllers/uploadController');
 const sponsorController = require('../controllers/sponsorController');
 const introductionController = require('../controllers/introductionController');
+const aboutController = require('../controllers/aboutController');
 const galleryController = require('../controllers/galleryController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
@@ -57,6 +58,10 @@ router.delete('/sponsors/:id', sponsorController.deleteSponsor);
 router.get('/introduction', introductionController.getIntroduction);
 router.put('/introduction', introductionController.updateIntroduction);
 router.post('/introduction/default', introductionController.createDefaultIntroduction);
+
+// --- About / Üritusest ---
+router.get('/about', aboutController.getAboutSection);
+router.put('/about', requireAdminAuth, aboutController.updateAboutSection);
 
 // --- Gallery ---
 router.get('/gallery', galleryController.getAllGalleryImages);
