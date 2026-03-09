@@ -6,9 +6,6 @@ const { buildRegistrationEmailPayload } = require("../utils/registrationEmail");
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-// lubatud valdkonnad (soovi korral tõsta configsse)
-const allowedFields = new Set(["Elektroonika", "Mehaanika", "Ehitus", "IT"]);
-
 const ShirtSizeEnum = z.enum(["XS", "S", "M", "L", "XL", "XXL"]);
 
 // Member Zod skeem
@@ -41,11 +38,12 @@ const MemberSchema = z.object({
 const RegistrationSchema = z.object({
   year: z.coerce.number().int().min(2000).max(3000).optional(),  // NEW (optional)
   teamName: z.string().trim().min(1).max(120),
-  field: z.string().trim().refine(v => allowedFields.has(v), "Invalid field"),
+  field: z.string().trim().min(1).max(100),
   leaderName: z.string().trim().min(1).max(120),
   leaderEmail: z.string().email().max(255),
   leaderPhone: z.string().trim().max(20).optional().or(z.literal("")).transform(v => v || null),
   turnstileToken: z.string().trim().min(1, "Missing Turnstile token"),
+  customAnswers: z.record(z.union([z.string(), z.boolean(), z.null()])).optional().default({}),
   members: z.array(MemberSchema).max(10).default([]),
 });
 
@@ -88,6 +86,54 @@ exports.registerTeam = async (req, res) => {
     }
 
     const data = parsed.data;
+
+    const [dbFields, activeQuestions] = await Promise.all([
+      prisma.field.findMany({ select: { name: true } }),
+      prisma.registrationQuestion.findMany({
+        where: { active: true },
+        orderBy: [{ order: 'asc' }, { createdAt: 'asc' }]
+      })
+    ]);
+
+    const allowedFields = new Set(
+      dbFields.map((f) => f.name).filter(Boolean)
+    );
+
+    if (allowedFields.size === 0) {
+      allowedFields.add('Elektroonika');
+      allowedFields.add('Mehaanika');
+      allowedFields.add('Ehitus');
+      allowedFields.add('IT');
+    }
+
+    if (!allowedFields.has(data.field)) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: { fieldErrors: { field: ['Invalid field'] } }
+      });
+    }
+
+    const incomingAnswers = data.customAnswers || {};
+    for (const question of activeQuestions) {
+      const value = incomingAnswers[question.fieldKey];
+      const hasValue =
+        typeof value === 'boolean'
+          ? value === true || value === false
+          : typeof value === 'string'
+            ? value.trim().length > 0
+            : value !== null && value !== undefined;
+
+      if (question.required && !hasValue) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: {
+            fieldErrors: {
+              customAnswers: [`Question "${question.label}" is required`]
+            }
+          }
+        });
+      }
+    }
 
     const remoteip =
       req.headers["cf-connecting-ip"] ||
@@ -152,6 +198,7 @@ exports.registerTeam = async (req, res) => {
           leaderName: data.leaderName,
           leaderEmail: data.leaderEmail,
           leaderPhone: data.leaderPhone,
+          customAnswers: data.customAnswers || {},
           editionId: ed.id,
           queueNo: nextQueueNo,
           members: membersClean.length ? { create: membersClean } : undefined,

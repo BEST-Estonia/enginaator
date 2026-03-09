@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Check } from 'lucide-react';
 import { Turnstile } from "@marsidev/react-turnstile";
 import { Button } from './ui/button';
@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from './ui/checkbox';
 import { useToast } from './hooks/use-toast';
 import { cn } from '@/lib/utils';
+import {
+  RegistrationQuestion,
+  getRegistrationFormConfig
+} from '@/services/registrationFormService';
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -27,6 +31,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     leaderEmail: '',
     leaderPhone: '',
     field: '',
+    customAnswers: {} as Record<string, string | boolean>,
     members: [
       { name: '', age: '', email: '', phone: '', accommodation: false, shirtSize: '', diet: '', school: '', consent: false},
       { name: '', age: '', email: '', phone: '', accommodation: false, shirtSize: '', diet: '', school: '', consent: false},
@@ -35,11 +40,34 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     ]
   });
 
-  const fields = ['Droonid', 'Mehaanika', 'Ehitus', 'IT'];
+  const [fields, setFields] = useState<string[]>(['Elektroonika', 'Mehaanika', 'Ehitus', 'IT']);
+  const [customQuestions, setCustomQuestions] = useState<RegistrationQuestion[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [configLoading, setConfigLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const loadConfig = async () => {
+      setConfigLoading(true);
+      try {
+        const config = await getRegistrationFormConfig();
+        setFields(config.fields?.length ? config.fields : ['Elektroonika', 'Mehaanika', 'Ehitus', 'IT']);
+        setCustomQuestions(config.questions || []);
+      } catch (error) {
+        console.error('Failed to load registration form config:', error);
+        setFields(['Elektroonika', 'Mehaanika', 'Ehitus', 'IT']);
+        setCustomQuestions([]);
+      } finally {
+        setConfigLoading(false);
+      }
+    };
+
+    loadConfig();
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +76,25 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     if (!formData.teamName || !formData.leaderName || !formData.leaderEmail || !formData.field) {
       toast({ title: "Viga", description: "Palun täida kõik vajalikud väljad", variant: "destructive" });
       return;
+    }
+
+    for (const question of customQuestions) {
+      const answer = formData.customAnswers[question.fieldKey];
+      const hasValue =
+        question.type === 'checkbox'
+          ? answer === true
+          : typeof answer === 'string'
+            ? answer.trim().length > 0
+            : false;
+
+      if (question.required && !hasValue) {
+        toast({
+          title: 'Viga',
+          description: `Palun täida väli: ${question.label}`,
+          variant: 'destructive'
+        });
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -95,6 +142,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
             leaderEmail: formData.leaderEmail,
             leaderPhone: formData.leaderPhone,
             turnstileToken: captchaToken,
+            customAnswers: formData.customAnswers,
                 members: cleanedMembers.map(m => ({
             name: m.name?.trim() || "",
             age: m.age?.trim() || "",
@@ -151,6 +199,16 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     const newMembers = [...formData.members];
     newMembers[index] = { ...newMembers[index], [field]: value };
     setFormData({ ...formData, members: newMembers });
+  };
+
+  const updateCustomAnswer = (fieldKey: string, value: string | boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      customAnswers: {
+        ...prev.customAnswers,
+        [fieldKey]: value
+      }
+    }));
   };
 
   if (!isOpen) return null;
@@ -215,6 +273,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
                     ))}
                   </SelectContent>
                 </Select>
+                {configLoading ? <p className="text-xs text-gray-500 mt-2">Laen valdkondi...</p> : null}
               </div>
               <div>
                 <Label htmlFor="leaderName">Tiimijuhi nimi *</Label>
@@ -249,6 +308,66 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
               </div>
             </div>
           </div>
+
+          {customQuestions.length > 0 ? (
+            <div>
+              <h3 className="text-xl font-semibold text-[hsl(var(--enginaator-black))] mb-6">
+                Lisaküsimused
+              </h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                {customQuestions.map((question) => {
+                  const currentValue = formData.customAnswers[question.fieldKey];
+
+                  return (
+                    <div key={question.id} className={question.type === 'textarea' ? 'md:col-span-2' : ''}>
+                      <Label>
+                        {question.label}{question.required ? ' *' : ''}
+                      </Label>
+
+                      {question.type === 'textarea' ? (
+                        <textarea
+                          value={typeof currentValue === 'string' ? currentValue : ''}
+                          onChange={(e) => updateCustomAnswer(question.fieldKey, e.target.value)}
+                          className="mt-2 w-full min-h-[100px] rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[hsl(var(--enginaator-red))] focus:ring-1 focus:ring-[hsl(var(--enginaator-red))]"
+                          placeholder={question.placeholder || ''}
+                        />
+                      ) : question.type === 'select' ? (
+                        <Select
+                          value={typeof currentValue === 'string' ? currentValue : ''}
+                          onValueChange={(value) => updateCustomAnswer(question.fieldKey, value)}
+                        >
+                          <SelectTrigger className="mt-2 border-gray-300 focus:border-[hsl(var(--enginaator-red))] focus:ring-[hsl(var(--enginaator-red))]">
+                            <SelectValue placeholder={question.placeholder || 'Vali vastus'} />
+                          </SelectTrigger>
+                          <SelectContent className="z-[999] bg-white border border-gray-200">
+                            {(question.options || []).map((option) => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : question.type === 'checkbox' ? (
+                        <div className="mt-2 h-10 w-full rounded-md border border-gray-300 px-3 flex items-center gap-3">
+                          <Checkbox
+                            checked={Boolean(currentValue)}
+                            onCheckedChange={(checked) => updateCustomAnswer(question.fieldKey, Boolean(checked))}
+                          />
+                          <span className="text-sm select-none">{Boolean(currentValue) ? 'Jah' : 'Ei'}</span>
+                        </div>
+                      ) : (
+                        <Input
+                          type={question.type === 'email' ? 'email' : question.type === 'number' ? 'number' : 'text'}
+                          value={typeof currentValue === 'string' ? currentValue : ''}
+                          onChange={(e) => updateCustomAnswer(question.fieldKey, e.target.value)}
+                          className="mt-2 border-gray-300 focus:border-[hsl(var(--enginaator-red))] focus:ring-[hsl(var(--enginaator-red))]"
+                          placeholder={question.placeholder || ''}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
 
           {/* Team Members */}
           <div>

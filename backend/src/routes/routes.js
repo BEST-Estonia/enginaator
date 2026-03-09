@@ -26,6 +26,7 @@ const fieldController = require('../controllers/fieldController');
 const projectTeamController = require('../controllers/projectTeamController');
 const faqController = require('../controllers/faqController');
 const settingsController = require('../controllers/settingsController');
+const registrationFormController = require('../controllers/registrationFormController');
 const { requireAdminAuth } = require('../middleware/adminAuth');
 
 // Admin auth
@@ -100,6 +101,13 @@ router.delete('/faqs/:id', requireAdminAuth, faqController.deleteFaqItem);
 // --- Settings ---
 router.get('/settings/registration', settingsController.getRegistrationSettings);
 router.put('/settings/registration', settingsController.updateRegistrationSettings);
+
+// --- Registration form config/questions ---
+router.get('/registration-form/config', registrationFormController.getRegistrationFormConfig);
+router.get('/registration-form/questions', requireAdminAuth, registrationFormController.getRegistrationQuestions);
+router.post('/registration-form/questions', requireAdminAuth, registrationFormController.createRegistrationQuestion);
+router.put('/registration-form/questions/:id', requireAdminAuth, registrationFormController.updateRegistrationQuestion);
+router.delete('/registration-form/questions/:id', requireAdminAuth, registrationFormController.deleteRegistrationQuestion);
 
 // --- Hero image upload ---
 const heroImageStorage = new CloudinaryStorage({
