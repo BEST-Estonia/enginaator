@@ -20,19 +20,24 @@ export interface HeroProps {
   duration: string;
 }
 
+export const HERO_DEFAULT_DATA: HeroProps = {
+  dateText: "17-20 APRILL 2025",
+  mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS",
+  eventDate: "April 17, 2026 00:00:00",
+  backgroundImage: "",
+  eventDateInfo: "17-20. aprill 2026",
+  location: "TalTech",
+  audience: "Insenerihuvilistele noortele",
+  duration: "4 päeva"
+};
+
 const Hero: React.FC<Partial<HeroProps>> = (props) => {
+  const hasProvidedProps = Object.keys(props).length > 0;
   const [heroData, setHeroData] = useState<HeroProps>({
-    dateText: "17-20 APRILL 2025",
-    mainTitle: "ÜLE-EESTILINE INSENERIVÕISTLUS",
-    eventDate: "April 17, 2026 00:00:00",
-    backgroundImage: "",
-    eventDateInfo: "17-20. aprill 2026",
-    location: "TalTech",
-    audience: "Insenerihuvilistele noortele",
-    duration: "4 päeva"
+    ...HERO_DEFAULT_DATA,
+    ...props
   });
   
-  const [isLoading, setIsLoading] = useState(!Object.keys(props).length);
   const [imageError, setImageError] = useState(false);
   
   const [timeLeft, setTimeLeft] = useState({
@@ -42,32 +47,38 @@ const Hero: React.FC<Partial<HeroProps>> = (props) => {
     seconds: 0,
   });
 
-  // Fetch hero data if no props are passed (on homepage)
+  // Keep preview in sync when editor props change
   useEffect(() => {
-    // If props are passed (preview mode in admin), use those instead of fetching
-    if (Object.keys(props).length > 0) {
-      setHeroData({...heroData, ...props});
-      return;
-    }
-    
+    if (!hasProvidedProps) return;
+    setHeroData({
+      ...HERO_DEFAULT_DATA,
+      ...props
+    });
+    setImageError(false);
+  }, [hasProvidedProps, props]);
+
+  // Fetch hero data only when props are absent
+  useEffect(() => {
+    if (hasProvidedProps) return;
+
     async function fetchData() {
-      setIsLoading(true);
       try {
         const res = await fetch(`${API_URL}/hero`);
         const data = await res.json();
         if (data.success && data.data) {
-          setHeroData(data.data);
+          setHeroData({
+            ...HERO_DEFAULT_DATA,
+            ...data.data
+          });
+          setImageError(false);
         }
       } catch (error) {
         console.error("Failed to fetch hero data:", error);
-        // Keep default data on error
-      } finally {
-        setIsLoading(false);
       }
     }
     
     fetchData();
-  }, [props]);
+  }, [hasProvidedProps]);
 
   useEffect(() => {
     const eventDateTs = new Date(heroData.eventDate).getTime();
