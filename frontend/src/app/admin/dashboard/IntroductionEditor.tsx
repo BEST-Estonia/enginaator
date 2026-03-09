@@ -96,7 +96,6 @@ const IntroductionEditor = ({ setActiveSection }: IntroductionEditorProps) => {
   };
 
   const handleCreateDefault = async () => {
-    console.log(`ma olen pede`);
     try {
       setLoading(true);
       setError(null);

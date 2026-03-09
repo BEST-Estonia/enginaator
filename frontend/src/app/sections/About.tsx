@@ -1,23 +1,53 @@
 "use client"
 import React from 'react';
 import {MapPin, Users, Trophy} from 'lucide-react';
+import { getAboutSection } from '@/services/aboutService';
+
+const FALLBACK_CONTENT = {
+  kusContent:
+    "Enginaator toimub TalTechis. Suurem osa võistlusest viiakse läbi tudengimaja aulas, kuid osalejate teekond viib neid ka muudesse ülikooli osadesse. Samuti on Tallinnast väljastpoolt tulevatel finalistidel võimalus ööbida 18. aprillil Hessnery Residentsis, mis asub Pärnu mnt. 453H. TalTechi campuselt (peatus Tehnikaülikool) liigub täpselt hotelli ette (peatus Pärnu maantee) buss nr.10.",
+  osalejadContent:
+    "Võistlus toimub neljaliikmelistes tiimides, mis koosnevad 18-24 aastastest gümnasistidest, kutsekooli õpilastest ja tudengitest. Võivad olla segatiimid, aga ka kõik ühest haridusasutusest. Kui tiimiliiget veel ei ole, ei tasu meelt heita, sest korraldustiim aitab Sul leida võistluskaaslased!",
+  auhinnadContent:
+    "Top 5 tiimile on tagatud koht TalTechis, ning finaali kolmele parimale tiimile on ligi 3000€ auhinnafond. Lisaks saavad osalejad eri auhindu ja meeneid meie ettevõtetelt ning sponsoritelt."
+};
 
 const About = () => {
+    const [content, setContent] = React.useState(FALLBACK_CONTENT);
+
+    React.useEffect(() => {
+        const load = async () => {
+            try {
+                const data = await getAboutSection();
+                setContent({
+                    kusContent: data.kusContent,
+                    osalejadContent: data.osalejadContent,
+                    auhinnadContent: data.auhinnadContent
+                });
+            } catch (error) {
+                console.error('Failed to load about content:', error);
+                setContent(FALLBACK_CONTENT);
+            }
+        };
+
+        load();
+    }, []);
+
     const sections = [
         {
             icon: MapPin,
             title: 'Kus',
-            content: "Enginaator toimub TalTechis. Suurem osa võistlusest viiakse läbi tudengimaja aulas, kuid osalejate teekond viib neid ka muudesse ülikooli osadesse. Samuti on Tallinnast väljastpoolt tulevatel finalistidel võimalus ööbida 18. aprillil Hessnery Residentsis, mis asub Pärnu mnt. 453H. TalTechi campuselt (peatus Tehnikaülikool) liigub täpselt hotelli ette (peatus Pärnu maantee) buss nr.10."
+            content: content.kusContent
         },
         {
             icon: Users,
             title: "Osalejad",
-            content: "Võistlus toimub neljaliikmelistes tiimides, mis koosnevad 18-24 aastastest gümnasistidest, kutsekooli õpilastest ja tudengitest. Võivad olla segatiimid, aga ka kõik ühest haridusasutusest. Kui tiimiliiget veel ei ole, ei tasu meelt heita, sest korraldustiim aitab Sul leida võistluskaaslased!"
+            content: content.osalejadContent
         },
         {
             icon: Trophy,
             title: "Auhinnad",
-            content: "Top 5 tiimile on tagatud koht TalTechis, ning finaali kolmele parimale tiimile on ligi 3000€ auhinnafond. Lisaks saavad osalejad eri auhindu ja meeneid meie ettevõtetelt ning sponsoritelt."
+            content: content.auhinnadContent
         }
     ];
   return (
