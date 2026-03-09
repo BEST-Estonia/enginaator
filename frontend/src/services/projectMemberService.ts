@@ -1,3 +1,5 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface ProjectMember {
@@ -27,10 +29,10 @@ export async function createProjectMember(
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => formData.append(key, value));
   if (image) formData.append('image', image);
-  const res = await fetch(`${API_URL}/projectMembers`, {
-    method: 'POST',
-    body: formData,
-  });
+  const res = await fetch(
+    `${API_URL}/projectMembers`,
+    getAdminRequestInit({ method: 'POST', body: formData }, false),
+  );
   if (!res.ok) throw new Error('Failed to create project member');
   return res.json();
 }
@@ -44,17 +46,20 @@ export async function updateProjectMember(
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => formData.append(key, value as string));
   if (image) formData.append('image', image);
-  const res = await fetch(`${API_URL}/projectMembers/${id}`, {
-    method: 'PUT',
-    body: formData,
-  });
+  const res = await fetch(
+    `${API_URL}/projectMembers/${id}`,
+    getAdminRequestInit({ method: 'PUT', body: formData }, false),
+  );
   if (!res.ok) throw new Error('Failed to update project member');
   return res.json();
 }
 
 // Delete a project member
 export async function deleteProjectMember(id: string): Promise<{ message: string }> {
-  const res = await fetch(`${API_URL}/projectMembers/${id}`, { method: 'DELETE' });
+  const res = await fetch(
+    `${API_URL}/projectMembers/${id}`,
+    getAdminRequestInit({ method: 'DELETE' }, false),
+  );
   if (!res.ok) throw new Error('Failed to delete project member');
   return res.json();
 }

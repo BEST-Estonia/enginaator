@@ -1,3 +1,5 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface Feature {
@@ -31,13 +33,10 @@ export async function getIntroduction(): Promise<Introduction> {
 
 // Update introduction data in the backend
 export async function updateIntroduction(data: Introduction): Promise<Introduction> {
-    const response = await fetch(`${API_URL}/introduction`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+        const response = await fetch(
+            `${API_URL}/introduction`,
+            getAdminRequestInit({ method: 'PUT', body: JSON.stringify(data) }, true),
+        );
 
     if (!response.ok) {
         throw new Error('Failed to update introduction content');
@@ -49,12 +48,10 @@ export async function updateIntroduction(data: Introduction): Promise<Introducti
 // Create default introduction data in the backend
 export async function createDefaultIntroduction(): Promise<Introduction> {
     console.log(`${API_URL}/introduction/default`)
-    const response = await fetch(`${API_URL}/introduction/default`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
+        const response = await fetch(
+            `${API_URL}/introduction/default`,
+            getAdminRequestInit({ method: 'POST' }, true),
+        );
   
     if (!response.ok) {
         throw new Error('Failed to create default introduction content');

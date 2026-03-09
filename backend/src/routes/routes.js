@@ -40,26 +40,26 @@ const upload = multer({ storage });
 
 // --- Teams ---
 router.post('/teams/register', teamController.registerTeam);
-router.get('/teams', teamController.getAllTeams);
-router.get('/teams/stats', teamController.getTeamStats);
-router.delete('/teams/:id', teamController.deleteTeam);
+router.get('/teams', requireAdminAuth, teamController.getAllTeams);
+router.get('/teams/stats', requireAdminAuth, teamController.getTeamStats);
+router.delete('/teams/:id', requireAdminAuth, teamController.deleteTeam);
 
 // --- Hero ---
 router.get('/hero', getHeroSection);
-router.put('/hero', updateHeroSection);
+router.put('/hero', requireAdminAuth, updateHeroSection);
 
 // --- Upload ---
-router.post('/upload', uploadImage);
+router.post('/upload', requireAdminAuth, uploadImage);
 
 // --- Sponsors ---
 router.get('/sponsors', sponsorController.getAllSponsors);
-router.post('/sponsors', upload.single('image'), sponsorController.createSponsor);
-router.delete('/sponsors/:id', sponsorController.deleteSponsor);
+router.post('/sponsors', requireAdminAuth, upload.single('image'), sponsorController.createSponsor);
+router.delete('/sponsors/:id', requireAdminAuth, sponsorController.deleteSponsor);
 
 // --- Introduction ---
 router.get('/introduction', introductionController.getIntroduction);
-router.put('/introduction', introductionController.updateIntroduction);
-router.post('/introduction/default', introductionController.createDefaultIntroduction);
+router.put('/introduction', requireAdminAuth, introductionController.updateIntroduction);
+router.post('/introduction/default', requireAdminAuth, introductionController.createDefaultIntroduction);
 
 // --- About / Üritusest ---
 router.get('/about', aboutController.getAboutSection);
@@ -71,26 +71,26 @@ router.put('/footer', requireAdminAuth, footerController.updateFooterSection);
 
 // --- Gallery ---
 router.get('/gallery', galleryController.getAllGalleryImages);
-router.post('/gallery', galleryController.createImage);
-router.delete('/gallery/:id', galleryController.deleteGalleryImage);
+router.post('/gallery', requireAdminAuth, galleryController.createImage);
+router.delete('/gallery/:id', requireAdminAuth, galleryController.deleteGalleryImage);
 
 // --- Main Sponsors ---
 router.get('/mainSponsors', mainSponsorController.getMainSponsors);
-router.post('/mainSponsors', upload.single('image'), mainSponsorController.createMainSponsor);
-router.put('/mainSponsors/:id', mainSponsorController.updateMainSponsor);
-router.delete('/mainSponsors/:id', mainSponsorController.deleteMainSponsor);
+router.post('/mainSponsors', requireAdminAuth, upload.single('image'), mainSponsorController.createMainSponsor);
+router.put('/mainSponsors/:id', requireAdminAuth, mainSponsorController.updateMainSponsor);
+router.delete('/mainSponsors/:id', requireAdminAuth, mainSponsorController.deleteMainSponsor);
 
 // --- Fields ---
 router.get('/fields', fieldController.getFields);
-router.post('/fields', fieldController.createField);
-router.put('/fields/:id', fieldController.updateField);
-router.delete('/fields/:id', fieldController.deleteField);
+router.post('/fields', requireAdminAuth, fieldController.createField);
+router.put('/fields/:id', requireAdminAuth, fieldController.updateField);
+router.delete('/fields/:id', requireAdminAuth, fieldController.deleteField);
 
 // --- Project Members ---
 router.get('/projectMembers', projectTeamController.getProjectMembers);
-router.post('/projectMembers', upload.single('image'), projectTeamController.createProjectMember);
-router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
-router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
+router.post('/projectMembers', requireAdminAuth, upload.single('image'), projectTeamController.createProjectMember);
+router.put('/projectMembers/:id', requireAdminAuth, upload.single('image'), projectTeamController.updateProjectMember);
+router.delete('/projectMembers/:id', requireAdminAuth, projectTeamController.deleteProjectMember);
 
 // --- FAQ ---
 router.get('/faqs', faqController.getFaqItems);
@@ -100,7 +100,7 @@ router.delete('/faqs/:id', requireAdminAuth, faqController.deleteFaqItem);
 
 // --- Settings ---
 router.get('/settings/registration', settingsController.getRegistrationSettings);
-router.put('/settings/registration', settingsController.updateRegistrationSettings);
+router.put('/settings/registration', requireAdminAuth, settingsController.updateRegistrationSettings);
 
 // --- Registration form config/questions ---
 router.get('/registration-form/config', registrationFormController.getRegistrationFormConfig);
@@ -114,7 +114,7 @@ const heroImageStorage = new CloudinaryStorage({
   cloudinary,
   params: { folder: 'enginaator/hero', allowed_formats: ['jpg','png','jpeg','webp'] },
 });
-router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'), (req, res) => {
+router.post('/hero/upload', requireAdminAuth, multer({ storage: heroImageStorage }).single('image'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, error: 'No file uploaded' });
     res.json({ success: true, url: req.file.path, message: 'Hero image uploaded successfully' });
@@ -126,6 +126,7 @@ router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'
 
 // --- Admin login ---
 router.post('/admin/login', adminAuthController.login);
+router.post('/admin/logout', adminAuthController.logout);
 router.put('/admin/change-password', requireAdminAuth, adminAuthController.changePassword);
 
 module.exports = router;

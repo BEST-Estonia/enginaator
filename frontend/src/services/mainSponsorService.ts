@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getAdminRequestInit } from '@/lib/adminAuth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -21,31 +22,30 @@ export async function getMainSponsors(): Promise<MainSponsor[]> {
 
 // Create a new main sponsor
 export async function createMainSponsor(data: Omit<MainSponsor, 'id' | 'createdAt' | 'updatedAt'>): Promise<MainSponsor> {
-  const response = await fetch(`${API_URL}/mainSponsors`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
+  const response = await fetch(
+    `${API_URL}/mainSponsors`,
+    getAdminRequestInit({ method: 'POST', body: JSON.stringify(data) }, true),
+  );
   if (!response.ok) throw new Error('Failed to create main sponsor');
   return response.json();
 }
 
 // Update a main sponsor
 export async function updateMainSponsor(id: string, data: Partial<MainSponsor>): Promise<MainSponsor> {
-  const response = await fetch(`${API_URL}/mainSponsors/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
+  const response = await fetch(
+    `${API_URL}/mainSponsors/${id}`,
+    getAdminRequestInit({ method: 'PUT', body: JSON.stringify(data) }, true),
+  );
   if (!response.ok) throw new Error('Failed to update main sponsor');
   return response.json();
 }
 
 // Delete a main sponsor
 export async function deleteMainSponsor(id: string): Promise<{ message: string }> {
-  const response = await fetch(`${API_URL}/mainSponsors/${id}`, {
-    method: 'DELETE'
-  });
+  const response = await fetch(
+    `${API_URL}/mainSponsors/${id}`,
+    getAdminRequestInit({ method: 'DELETE' }, false),
+  );
   if (!response.ok) throw new Error('Failed to delete main sponsor');
   return response.json();
 }
@@ -64,7 +64,10 @@ export async function createMainSponsorWithImage(
     if (website) formData.append('website', website);
 
     const response = await axios.post(`${API_URL}/mainSponsors`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials: true,
     });
 
     return response.data;

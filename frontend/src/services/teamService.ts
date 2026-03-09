@@ -1,3 +1,5 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export type TeamRow = {
@@ -45,7 +47,10 @@ export async function fetchTeams(opts: {
   const url = `${BASE}/teams${params.toString() ? `?${params.toString()}` : ""}`;
   if (process.env.NODE_ENV !== "production") console.log("[fetchTeams]", url);
 
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(
+    url,
+    getAdminRequestInit({ cache: 'no-store' }, false),
+  );
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`fetchTeams ${res.status} @ ${url} : ${text.slice(0,160)}…`);

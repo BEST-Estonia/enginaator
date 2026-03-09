@@ -66,7 +66,7 @@ const AdminDashboard = () => {
     if (activeSection === 'dashboard') {
       loadStats();
     }
-  }, [activeSection]);
+  }, [activeSection, router]);
 
 
   return (
@@ -281,10 +281,15 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <span className='text-sm text-gray-500 mt-6'>Last updated: Just now</span>
               <button
-                onClick={() => {
-                  localStorage.removeItem('adminToken');
-                  localStorage.removeItem('adminAuth');
-                  router.push('/admin/login');
+                onClick={async () => {
+                  try {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/logout`, {
+                      method: 'POST',
+                      credentials: 'include',
+                    });
+                  } finally {
+                    router.push('/admin/login');
+                  }
                 }} 
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">Sign Out</button>
             </div>

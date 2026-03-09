@@ -57,6 +57,7 @@ export const createGalleryImage = async (
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            withCredentials: true,
         });
 
         return response.data.galleryImage;
@@ -73,7 +74,9 @@ export const createGalleryImage = async (
  */
 export const deleteGalleryImage = async (id: string): Promise<boolean> => {
   try {
-    await axios.delete(`${API_URL}/gallery/${id}`);
+        await axios.delete(`${API_URL}/gallery/${id}`, {
+            withCredentials: true,
+        });
     return true;
   } catch (error) {
     console.error('Error deleting gallery image:', error);

@@ -57,6 +57,7 @@ export const createSponsor = async (
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+          withCredentials: true,
         });
 
         return response.data;
@@ -73,7 +74,9 @@ export const createSponsor = async (
  */
 export const deleteSponsor = async (id: string): Promise<boolean> => {
   try {
-    await axios.delete(`${API_URL}/sponsors/${id}`);
+    await axios.delete(`${API_URL}/sponsors/${id}`, {
+      withCredentials: true,
+    });
     return true;
   } catch (error) {
     console.error('Error deleting sponsor:', error);

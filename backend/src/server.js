@@ -14,9 +14,24 @@ const prisma = new PrismaClient({
 process.on('unhandledRejection', (r) => console.error('[unhandledRejection]', r));
 process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
 
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_ORIGIN,
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+].filter(Boolean);
 
 // Enable CORSss
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || configuredOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 
 // Parse JSON requests
 app.use(express.json());

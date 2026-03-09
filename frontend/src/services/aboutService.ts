@@ -1,16 +1,6 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-function getAdminAuthHeaders(): HeadersInit {
-  if (typeof window === 'undefined') {
-    return { 'Content-Type': 'application/json' };
-  }
-
-  const token = localStorage.getItem('adminToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {})
-  };
-}
 
 export interface AboutSection {
   id: string;
@@ -30,11 +20,10 @@ export async function getAboutSection(): Promise<AboutSection> {
 export async function updateAboutSection(
   data: Pick<AboutSection, 'kusContent' | 'osalejadContent' | 'auhinnadContent'>
 ): Promise<AboutSection> {
-  const response = await fetch(`${API_URL}/about`, {
-    method: 'PUT',
-    headers: getAdminAuthHeaders(),
-    body: JSON.stringify(data)
-  });
+  const response = await fetch(
+    `${API_URL}/about`,
+    getAdminRequestInit({ method: 'PUT', body: JSON.stringify(data) }, true),
+  );
 
   if (!response.ok) throw new Error('Failed to update about section');
   return response.json();

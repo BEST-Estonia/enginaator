@@ -23,11 +23,10 @@ const AdminLogin = () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password })
       });
       if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('adminToken', data.token);
         router.push('/admin/dashboard');
       } else {
         setError('Invalid email or password');
