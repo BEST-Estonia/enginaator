@@ -1,4 +1,5 @@
 // Service for hero section API calls
+import { getAdminRequestInit } from '@/lib/adminAuth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -35,9 +36,7 @@ export const heroService = {
   async updateHeroData(heroData: HeroData): Promise<HeroData> {
     try {
       const res = await fetch(`${API_URL}/hero`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(heroData)
+        ...getAdminRequestInit({ method: 'PUT', body: JSON.stringify(heroData) }, true),
       });
       
       const data = await res.json();
@@ -60,8 +59,7 @@ export const heroService = {
       formData.append('image', file);
       
       const res = await fetch(`${API_URL}/upload`, {
-        method: 'POST',
-        body: formData
+        ...getAdminRequestInit({ method: 'POST', body: formData }, false),
       });
       
       const data = await res.json();

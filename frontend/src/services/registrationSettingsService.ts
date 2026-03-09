@@ -1,3 +1,5 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface RegistrationSettings {
@@ -26,9 +28,13 @@ export const registrationSettingsService = {
   async updateRegistrationSettings(settings: RegistrationSettings): Promise<RegistrationSettings> {
     try {
       const res = await fetch(`${API_URL}/settings/registration`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
+        ...getAdminRequestInit(
+          {
+            method: 'PUT',
+            body: JSON.stringify(settings),
+          },
+          true,
+        )
       });
       const data = await res.json();
 

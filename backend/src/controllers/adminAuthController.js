@@ -3,6 +3,17 @@ const jwt = require('jsonwebtoken');
 const { prisma } = require('../utils/prisma');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
+const ADMIN_COOKIE_NAME = 'adminToken';
+
+function getCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/',
+  };
+}
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -12,7 +23,19 @@ exports.login = async (req, res) => {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
-  res.json({ token });
+  res.cookie(ADMIN_COOKIE_NAME, token, getCookieOptions());
+  res.json({ success: true });
+};
+
+exports.logout = async (_req, res) => {
+  res.clearCookie(ADMIN_COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
+
+  return res.json({ success: true });
 };
 
 exports.changePassword = async (req, res) => {

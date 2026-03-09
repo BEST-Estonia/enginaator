@@ -1,16 +1,6 @@
+import { getAdminRequestInit } from '@/lib/adminAuth';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-function getAdminAuthHeaders(): HeadersInit {
-  if (typeof window === 'undefined') {
-    return { 'Content-Type': 'application/json' };
-  }
-
-  const token = localStorage.getItem('adminToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {})
-  };
-}
 
 export interface FooterSection {
   id: string;
@@ -40,11 +30,10 @@ export async function getFooterSection(): Promise<FooterSection> {
 }
 
 export async function updateFooterSection(data: FooterPayload): Promise<FooterSection> {
-  const response = await fetch(`${API_URL}/footer`, {
-    method: 'PUT',
-    headers: getAdminAuthHeaders(),
-    body: JSON.stringify(data)
-  });
+  const response = await fetch(
+    `${API_URL}/footer`,
+    getAdminRequestInit({ method: 'PUT', body: JSON.stringify(data) }, true),
+  );
 
   if (!response.ok) throw new Error('Failed to update footer section');
   return response.json();
@@ -54,10 +43,10 @@ export async function uploadFooterImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('image', file);
 
-  const response = await fetch(`${API_URL}/upload`, {
-    method: 'POST',
-    body: formData
-  });
+  const response = await fetch(
+    `${API_URL}/upload`,
+    getAdminRequestInit({ method: 'POST', body: formData }, false),
+  );
 
   const data = await response.json();
   if (!response.ok || !data?.success || !data?.url) {
