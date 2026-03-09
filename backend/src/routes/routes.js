@@ -19,6 +19,7 @@ const { uploadImage } = require('../controllers/uploadController');
 const sponsorController = require('../controllers/sponsorController');
 const introductionController = require('../controllers/introductionController');
 const aboutController = require('../controllers/aboutController');
+const footerController = require('../controllers/footerController');
 const galleryController = require('../controllers/galleryController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
@@ -62,6 +63,10 @@ router.post('/introduction/default', introductionController.createDefaultIntrodu
 // --- About / Üritusest ---
 router.get('/about', aboutController.getAboutSection);
 router.put('/about', requireAdminAuth, aboutController.updateAboutSection);
+
+// --- Footer ---
+router.get('/footer', footerController.getFooterSection);
+router.put('/footer', requireAdminAuth, footerController.updateFooterSection);
 
 // --- Gallery ---
 router.get('/gallery', galleryController.getAllGalleryImages);

@@ -1,26 +1,70 @@
+"use client";
+
 import React from 'react';
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import Image from 'next/image';
-import enginaator from '@/assets/enginaator.png';
-import best from '@/assets/best.png';
-import taltech from '@/assets/taltech.png';
+import { getFooterSection } from '@/services/footerService';
+
+const FALLBACK_FOOTER = {
+  logoUrl: '/enginaator.png',
+  tagline: 'Eesti suurim insenerivõistlus tudengitele',
+  contactEmail: 'Projektijuht@enginaator.ee',
+  contactPhone: '+372 56827565',
+  contactAddress: 'Ehitajate tee 5, Tallinn',
+  facebookUrl: 'https://www.facebook.com/Enginaator',
+  instagramUrl: 'https://www.instagram.com/enginaator.official/',
+  linkedinUrl: 'https://www.linkedin.com/company/enginaator/',
+  partner1Name: 'Best Estonia',
+  partner1LogoUrl: '/best.png',
+  partner2Name: 'TalTech',
+  partner2LogoUrl: '/taltech.png',
+  copyrightText: '© 2026 Enginaator. Kõik õigused kaitstud.'
+};
 
 const Footer = () => {
+  const [footer, setFooter] = React.useState(FALLBACK_FOOTER);
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getFooterSection();
+        setFooter({
+          logoUrl: data.logoUrl,
+          tagline: data.tagline,
+          contactEmail: data.contactEmail,
+          contactPhone: data.contactPhone,
+          contactAddress: data.contactAddress,
+          facebookUrl: data.facebookUrl,
+          instagramUrl: data.instagramUrl,
+          linkedinUrl: data.linkedinUrl,
+          partner1Name: data.partner1Name,
+          partner1LogoUrl: data.partner1LogoUrl,
+          partner2Name: data.partner2Name,
+          partner2LogoUrl: data.partner2LogoUrl,
+          copyrightText: data.copyrightText
+        });
+      } catch (error) {
+        console.error('Failed to load footer section:', error);
+        setFooter(FALLBACK_FOOTER);
+      }
+    };
+
+    load();
+  }, []);
+
   return (
-    <footer className="bg-[hsl(var(--enginaator-black))] text-white py-16">
+    <footer id="kontakt" className="bg-[hsl(var(--enginaator-black))] text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Logo + small image*/}
           <div>
-            <Image
-              src={enginaator}
-              alt='enginaator logo'
-              width={180}
-              height={180}
+            <img
+              src={footer.logoUrl}
+              alt="enginaator logo"
+              className="w-[180px] h-auto"
             />
             
             <p className="text-gray-400 text-sm leading-relaxed mt-3">
-              Eesti suurim insenerivõistlus tudengitele
+              {footer.tagline}
             </p>
           </div>
           
@@ -31,23 +75,23 @@ const Footer = () => {
             </h4>
             <div className="space-y-3">
                 <a 
-                href="mailto:info@enginaator.ee"
+                href={`mailto:${footer.contactEmail}`}
                 className="flex items-center space-x-3 text-gray-300 hover:text-[hsl(var(--enginaator-red))] transition-colors duration-200"
               >
                   <Mail className="w-4 h-4" />
-                  <span className="text-sm">Projektijuht@enginaator.ee</span>
+                  <span className="text-sm">{footer.contactEmail}</span>
               </a>
               <a 
-                href="tel:+37256273153"
+                href={`tel:${footer.contactPhone.replace(/\s+/g, '')}`}
                 className="flex items-center space-x-3 text-gray-300 hover:text-[hsl(var(--enginaator-red))] transition-colors duration-200"
               >
                 <Phone className="w-4 h-4" />
-                <span className="text-sm">+372 56827565</span>
+                <span className="text-sm">{footer.contactPhone}</span>
               </a>
 
               <div className="flex items-center space-x-3 text-gray-300">
                 <MapPin className="w-4 h-4" />
-                <span className="text-sm">Ehitajate tee 5, Tallinn</span>
+                <span className="text-sm">{footer.contactAddress}</span>
               </div>
             </div>
           </div>
@@ -60,7 +104,7 @@ const Footer = () => {
             
             <div className="flex space-x-4">
                 <a 
-                  href="https://www.facebook.com/Enginaator" 
+                  href={footer.facebookUrl} 
                   className="w-10 h-10 bg-[hsl(var(--enginaator-black-soft))] rounded-full flex items-center justify-center hover:bg-[hsl(var(--enginaator-red))] transition-colors duration-200"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -69,7 +113,7 @@ const Footer = () => {
                 </a>
 
                 <a 
-                  href="https://www.instagram.com/enginaator.official/" 
+                  href={footer.instagramUrl} 
                   className="w-10 h-10 bg-[hsl(var(--enginaator-black-soft))] rounded-full flex items-center justify-center hover:bg-[hsl(var(--enginaator-red))] transition-colors duration-200"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -78,7 +122,7 @@ const Footer = () => {
                 </a>
 
                 <a 
-                  href="https://www.linkedin.com/company/enginaator/" 
+                  href={footer.linkedinUrl} 
                   className="w-10 h-10 bg-[hsl(var(--enginaator-black-soft))] rounded-full flex items-center justify-center hover:bg-[hsl(var(--enginaator-red))] transition-colors duration-200"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -94,16 +138,15 @@ const Footer = () => {
                 Partnerid
             </h4>
             <div className="grid grid-cols-2 gap-5">
-                <Image 
-                src={best}
-                alt='Best Estonia logo'
+              <img 
+              src={footer.partner1LogoUrl}
+              alt={footer.partner1Name}
+              className="w-full h-auto object-contain"
                 />
-                <Image 
-                src={taltech}
-                alt='TalTech logo'
-                width={120}
-                height={110}
-                className='mt-4'
+              <img 
+              src={footer.partner2LogoUrl}
+              alt={footer.partner2Name}
+              className='w-full h-auto object-contain mt-4'
                 />
             </div>
           </div>
@@ -112,7 +155,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-[hsl(var(--enginaator-black-soft))] pt-8">
           <p className="text-center text-gray-400 text-sm">
-            © 2026 Enginaator. Kõik õigused kaitstud.
+            {footer.copyrightText}
           </p>
         </div>
       </div>

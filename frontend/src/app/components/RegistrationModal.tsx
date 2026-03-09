@@ -35,7 +35,7 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
     ]
   });
 
-  const fields = ['Elektroonika', 'Mehaanika', 'Ehitus', 'IT'];
+  const fields = ['Droonid', 'Mehaanika', 'Ehitus', 'IT'];
   const [submitting, setSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 

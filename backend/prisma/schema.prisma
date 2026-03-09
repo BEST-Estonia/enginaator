@@ -143,6 +143,27 @@ model AboutSection {
   updatedAt        DateTime @updatedAt @db.Timestamptz
 }
 
+model FooterSection {
+  id            String   @id @default(cuid())
+  logoUrl       String   @db.VarChar(500)
+  tagline       String   @db.Text
+  contactEmail  String   @db.VarChar(255)
+  contactPhone  String   @db.VarChar(50)
+  contactAddress String  @db.VarChar(500)
+  facebookUrl   String   @db.VarChar(1000)
+  instagramUrl  String   @db.VarChar(1000)
+  linkedinUrl   String   @db.VarChar(1000)
+  partner1Name  String   @db.VarChar(120)
+  partner1LogoUrl String @db.VarChar(500)
+  partner2Name  String   @db.VarChar(120)
+  partner2LogoUrl String @db.VarChar(500)
+  copyrightText String   @db.VarChar(300)
+  createdAt     DateTime @default(now()) @db.Timestamptz
+  updatedAt     DateTime @updatedAt @db.Timestamptz
+
+  @@map("footer_sections")
+}
+
 model MainSponsor {
   id           String   @id @default(cuid())
   sponsorName  String

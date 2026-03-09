@@ -14,6 +14,7 @@ import { IoMdImages } from "react-icons/io";
 import { fetchSponsors } from '@/services/sponsorService';  // Add this import
 import IntroductionEditor from './IntroductionEditor';
 import AboutEditor from './AboutEditor';
+import FooterEditor from './FooterEditor';
 import GalleryEditor from './GalleryEditor';
 import FieldEditor from './FieldEditor';
 import ProjectMemberEditor from './ProjectMemberEditor';
@@ -180,6 +181,16 @@ const AdminDashboard = () => {
                   }`}
                 >
                   <span className="font-medium">FAQ Management</span>
+                </button>
+
+                <button 
+                  onClick={() => setActiveSection('footerSection')}
+                  className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                    activeSection === 'footerSection' ? 'bg-red-50 text-red-600'
+                    : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-medium">Footer</span>
                 </button>
 
                 <button 
@@ -363,6 +374,9 @@ const AdminDashboard = () => {
             )}
             {activeSection === 'faq' && (
               <FaqEditor setActiveSection={setActiveSection} />
+            )}
+            {activeSection === 'footerSection' && (
+              <FooterEditor />
             )}
             {activeSection === 'registrations' && (
               <RegistrationsTable />
