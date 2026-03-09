@@ -14,3 +14,43 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
   res.json({ token });
 };
+
+exports.changePassword = async (req, res) => {
+  const adminId = req.adminUser?.id;
+  const { currentPassword, newPassword } = req.body || {};
+
+  if (!adminId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'Current password and new password are required' });
+  }
+
+  if (String(newPassword).length < 10) {
+    return res.status(400).json({ error: 'New password must be at least 10 characters' });
+  }
+
+  const user = await prisma.adminUser.findUnique({ where: { id: adminId } });
+  if (!user) {
+    return res.status(404).json({ error: 'Admin user not found' });
+  }
+
+  const currentMatches = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!currentMatches) {
+    return res.status(401).json({ error: 'Current password is incorrect' });
+  }
+
+  const sameAsCurrent = await bcrypt.compare(newPassword, user.passwordHash);
+  if (sameAsCurrent) {
+    return res.status(400).json({ error: 'New password must be different from current password' });
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 12);
+  await prisma.adminUser.update({
+    where: { id: adminId },
+    data: { passwordHash },
+  });
+
+  return res.json({ success: true, message: 'Password updated successfully' });
+};

@@ -126,5 +126,6 @@ router.post('/hero/upload', multer({ storage: heroImageStorage }).single('image'
 
 // --- Admin login ---
 router.post('/admin/login', adminAuthController.login);
+router.put('/admin/change-password', requireAdminAuth, adminAuthController.changePassword);
 
 module.exports = router;
