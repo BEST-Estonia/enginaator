@@ -16,6 +16,7 @@ import IntroductionEditor from './IntroductionEditor';
 import GalleryEditor from './GalleryEditor';
 import FieldEditor from './FieldEditor';
 import ProjectMemberEditor from './ProjectMemberEditor';
+import FaqEditor from './FaqEditor';
 import { fetchTeams } from '@/services/teamService';
 import RegistrationsTable from '@/app/components/RegistrationsTable';
 import RegistrationSettingsEditor from './RegistrationSettingsEditor';
@@ -233,6 +234,7 @@ const AdminDashboard = () => {
               <span className='text-sm text-gray-500 mt-6'>Last updated: Just now</span>
               <button
                 onClick={() => {
+                  localStorage.removeItem('adminToken');
                   localStorage.removeItem('adminAuth');
                   router.push('/admin/login');
                 }} 
@@ -343,7 +345,10 @@ const AdminDashboard = () => {
 
             {/* Project Members Management Editor */}
             {activeSection === 'team' && (
-              <ProjectMemberEditor setActiveSection={setActiveSection} />
+              <ProjectMemberEditor />
+            )}
+            {activeSection === 'faq' && (
+              <FaqEditor setActiveSection={setActiveSection} />
             )}
             {activeSection === 'registrations' && (
               <RegistrationsTable />

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react";
+import { getFaqItems } from "@/services/faqService";
 
 type FAQItem = {
   question: string;
@@ -12,32 +13,11 @@ type FAQCategory = {
   items: FAQItem[];
 };
 
-const CATEGORIES: FAQCategory[] = [
+const FALLBACK_CATEGORIES: FAQCategory[] = [
   {
     title: "Küsimused",
-    items: [
-      {
-        question: "Kellega probleemide korral ühendust võtta?",
-        answer:
-          "Probleemide või küsimuste korral võtta ühendust meie osalejate ja logistikajuhiga meili teel Logistikajuht@enginaator.ee või helistage +372 56827565.",
-      },
-      {
-        question: "Kas ürituse ajal on võimalik magada?",
-        answer:
-          "Osalejatele on ürituse ajaks valmis seatud vaiksemas kohas eraldi magamisala. Kaugemalt saabuvatele finalistidele on eelvooru ja finaali vahelisel puhkepäeval olemas majutus.",
-      },
-      {
-        question: "Mida kaasa võtta?",
-        answer:
-          "Võta kaasa iseennast, hea tuju, arvuti ja laadijad. Riietus mugav ja sobilik võistluseks. Kõik vajalik ülesannete lahendamiseks tuleb korraldajate poolt. Osalejatele on ette nähtud üks soe söögikord, snäkid ning ergutavad joogid. ",
-      },
-      {
-        question: "Kas eelteadmised on vajalikud?",
-        answer:
-          "Võidule aitab kaasa eelteadmiste omamine, kuid haridustase ei mängi rolli – Enginaator 2023 panid kinni just gümnasistid! Kui mõni valdkond või teema on võõram, ei tasu ka muretseda, sest lahendamise ajal on võimalik kasutada avatud materjale. ",
-      },
-    ],
-  },
+    items: []
+  }
 ];
 
 function AccordionItem({
@@ -116,6 +96,40 @@ function AccordionItem({
 }
 
 export default function Faq() {
+  const [categories, setCategories] = React.useState<FAQCategory[]>(FALLBACK_CATEGORIES);
+
+  React.useEffect(() => {
+    const loadFaq = async () => {
+      try {
+        const items = await getFaqItems();
+
+        if (!items.length) {
+          setCategories(FALLBACK_CATEGORIES);
+          return;
+        }
+
+        const grouped = items.reduce<Record<string, FAQItem[]>>((acc, item) => {
+          const key = item.category || "Küsimused";
+          if (!acc[key]) acc[key] = [];
+          acc[key].push({ question: item.question, answer: item.answer });
+          return acc;
+        }, {});
+
+        const mapped: FAQCategory[] = Object.entries(grouped).map(([title, groupedItems]) => ({
+          title,
+          items: groupedItems
+        }));
+
+        setCategories(mapped);
+      } catch (error) {
+        console.error('Failed to load FAQ items:', error);
+        setCategories(FALLBACK_CATEGORIES);
+      }
+    };
+
+    loadFaq();
+  }, []);
+
   return (
     <section id='kkk' className="py-12 sm:py-16 md:py-20 px-6 sm:px-10 md:px-16 lg:px-24 xl:px-32 [font-family:var(--font-poppins)]">
       <div className="mx-auto max-w-3xl text-center mb-10 sm:mb-14">
@@ -124,7 +138,7 @@ export default function Faq() {
       </div>
 
       <div className="mx-auto max-w-4xl space-y-10">
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <div key={cat.title} className="space-y-4">
             <h2 className="text-lg font-semibold opacity-80">{cat.title}</h2>
             <div className="divide-y rounded-2xl border shadow-sm">
