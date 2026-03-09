@@ -22,7 +22,9 @@ const galleryController = require('../controllers/galleryController');
 const mainSponsorController = require('../controllers/mainSponsorController');
 const fieldController = require('../controllers/fieldController');
 const projectTeamController = require('../controllers/projectTeamController');
+const faqController = require('../controllers/faqController');
 const settingsController = require('../controllers/settingsController');
+const { requireAdminAuth } = require('../middleware/adminAuth');
 
 // Admin auth
 const adminAuthController = require('../controllers/adminAuthController');
@@ -78,6 +80,12 @@ router.get('/projectMembers', projectTeamController.getProjectMembers);
 router.post('/projectMembers', upload.single('image'), projectTeamController.createProjectMember);
 router.put('/projectMembers/:id', upload.single('image'), projectTeamController.updateProjectMember);
 router.delete('/projectMembers/:id', projectTeamController.deleteProjectMember);
+
+// --- FAQ ---
+router.get('/faqs', faqController.getFaqItems);
+router.post('/faqs', requireAdminAuth, faqController.createFaqItem);
+router.put('/faqs/:id', requireAdminAuth, faqController.updateFaqItem);
+router.delete('/faqs/:id', requireAdminAuth, faqController.deleteFaqItem);
 
 // --- Settings ---
 router.get('/settings/registration', settingsController.getRegistrationSettings);

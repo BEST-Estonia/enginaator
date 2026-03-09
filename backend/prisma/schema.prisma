@@ -173,6 +173,20 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  category  String   @db.VarChar(120)
+  question  String   @db.VarChar(500)
+  answer    String   @db.Text
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([category])
+  @@index([order])
+  @@map("faq_items")
+}
 // Admin kasutajate mudel
 model AdminUser {
   id           String   @id @default(cuid())

@@ -10,7 +10,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [registrationOpen, setRegistrationOpen] = useState(true);
+  const [registrationOpen, setRegistrationOpen] = useState<boolean | null>(null);
   const lastYRef = useRef(0);
   const { openModal } = useModal();
 
@@ -65,6 +65,7 @@ export default function Navbar() {
         setRegistrationOpen(Boolean(data.registrationOpen));
       } catch (error) {
         console.error('Failed to load registration settings:', error);
+        setRegistrationOpen(false);
       }
     };
 
@@ -134,7 +135,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {registrationOpen ? (
+      {registrationOpen === true ? (
         <div className="hidden md:block">
           <button
             onClick={openModal}
@@ -185,7 +186,7 @@ export default function Navbar() {
                 {label}
             </button>
             ))}
-            {registrationOpen ? (
+            {registrationOpen === true ? (
               <button
                 onClick={() => {
                   setMenuOpen(false);
