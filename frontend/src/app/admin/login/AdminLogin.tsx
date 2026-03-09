@@ -14,6 +14,11 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const setUiSessionCookie = () => {
+    const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    document.cookie = `adminUiSession=1; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Lax${isHttps ? '; Secure' : ''}`;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,6 +32,7 @@ const AdminLogin = () => {
         body: JSON.stringify({ email, password })
       });
       if (res.ok) {
+        setUiSessionCookie();
         router.push('/admin/dashboard');
       } else {
         setError('Invalid email or password');

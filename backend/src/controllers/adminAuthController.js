@@ -6,10 +6,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
 const ADMIN_COOKIE_NAME = 'adminToken';
 
 function getCookieOptions() {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000,
     path: '/',
   };
@@ -28,10 +30,12 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (_req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.clearCookie(ADMIN_COOKIE_NAME, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/',
   });
 
