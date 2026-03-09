@@ -17,14 +17,33 @@ process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
 const configuredOrigins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_ORIGIN,
+  ...(process.env.CORS_ALLOWED_ORIGINS || '').split(',').map((origin) => origin.trim()),
+  'https://enginaator.ee',
+  'https://www.enginaator.ee',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
 ].filter(Boolean);
 
+const configuredOriginSet = new Set(configuredOrigins);
+
+function isAllowedOrigin(origin) {
+  if (configuredOriginSet.has(origin)) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(origin);
+    const host = parsed.hostname.toLowerCase();
+    return host === 'enginaator.ee' || host === 'www.enginaator.ee';
+  } catch {
+    return false;
+  }
+}
+
 // Enable CORSss
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || configuredOrigins.includes(origin)) {
+    if (!origin || isAllowedOrigin(origin)) {
       return callback(null, true);
     }
 

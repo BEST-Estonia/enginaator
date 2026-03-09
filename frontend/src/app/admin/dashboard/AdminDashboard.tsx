@@ -39,6 +39,11 @@ const AdminDashboard = () => {
     galleryImages: 0
   });
 
+  const clearUiSessionCookie = () => {
+    const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    document.cookie = `adminUiSession=; Path=/; Max-Age=0; SameSite=Lax${isHttps ? '; Secure' : ''}`;
+  };
+
   // Fetch stats when dashboard is loaded
 
   useEffect(() => {
@@ -288,6 +293,7 @@ const AdminDashboard = () => {
                       credentials: 'include',
                     });
                   } finally {
+                    clearUiSessionCookie();
                     router.push('/admin/login');
                   }
                 }} 
