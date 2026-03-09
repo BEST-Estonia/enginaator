@@ -49,3 +49,20 @@ export async function updateFooterSection(data: FooterPayload): Promise<FooterSe
   if (!response.ok) throw new Error('Failed to update footer section');
   return response.json();
 }
+
+export async function uploadFooterImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const response = await fetch(`${API_URL}/upload`, {
+    method: 'POST',
+    body: formData
+  });
+
+  const data = await response.json();
+  if (!response.ok || !data?.success || !data?.url) {
+    throw new Error(data?.error || 'Failed to upload image');
+  }
+
+  return data.url as string;
+}

@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { FooterPayload, getFooterSection, updateFooterSection } from '@/services/footerService';
+import {
+  FooterPayload,
+  getFooterSection,
+  updateFooterSection,
+  uploadFooterImage
+} from '@/services/footerService';
 
 const initialForm: FooterPayload = {
   logoUrl: '/enginaator.png',
@@ -25,6 +30,7 @@ const FooterEditor: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [form, setForm] = useState<FooterPayload>(initialForm);
+  const [uploadingField, setUploadingField] = useState<keyof FooterPayload | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -79,6 +85,33 @@ const FooterEditor: React.FC = () => {
     }
   };
 
+  const handleImageUpload = async (
+    field: 'logoUrl' | 'partner1LogoUrl' | 'partner2LogoUrl',
+    file: File | null
+  ) => {
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image file is too large. Maximum size is 5MB.');
+      return;
+    }
+
+    setUploadingField(field);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const url = await uploadFooterImage(file);
+      setForm((prev) => ({ ...prev, [field]: url }));
+      setSuccess('Image uploaded successfully.');
+      setTimeout(() => setSuccess(null), 2500);
+    } catch {
+      setError('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -98,6 +131,16 @@ const FooterEditor: React.FC = () => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
           <input name="logoUrl" value={form.logoUrl} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2" required />
+          <label className="inline-flex mt-2 items-center px-3 py-2 border border-gray-300 rounded-lg cursor-pointer text-sm text-gray-700 hover:bg-gray-50">
+            {uploadingField === 'logoUrl' ? 'Uploading...' : 'Upload from computer'}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploadingField !== null}
+              onChange={(e) => handleImageUpload('logoUrl', e.target.files?.[0] || null)}
+            />
+          </label>
         </div>
 
         <div>
@@ -144,6 +187,16 @@ const FooterEditor: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Partner 1 Logo URL</label>
             <input name="partner1LogoUrl" value={form.partner1LogoUrl} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2" required />
+            <label className="inline-flex mt-2 items-center px-3 py-2 border border-gray-300 rounded-lg cursor-pointer text-sm text-gray-700 hover:bg-gray-50">
+              {uploadingField === 'partner1LogoUrl' ? 'Uploading...' : 'Upload from computer'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={uploadingField !== null}
+                onChange={(e) => handleImageUpload('partner1LogoUrl', e.target.files?.[0] || null)}
+              />
+            </label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Partner 2 Name</label>
@@ -152,6 +205,16 @@ const FooterEditor: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Partner 2 Logo URL</label>
             <input name="partner2LogoUrl" value={form.partner2LogoUrl} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2" required />
+            <label className="inline-flex mt-2 items-center px-3 py-2 border border-gray-300 rounded-lg cursor-pointer text-sm text-gray-700 hover:bg-gray-50">
+              {uploadingField === 'partner2LogoUrl' ? 'Uploading...' : 'Upload from computer'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={uploadingField !== null}
+                onChange={(e) => handleImageUpload('partner2LogoUrl', e.target.files?.[0] || null)}
+              />
+            </label>
           </div>
         </div>
 
