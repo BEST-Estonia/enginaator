@@ -1,9 +1,8 @@
 "use client";
 import * as XLSX from "xlsx";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { fetchTeams, type TeamRow } from "@/services/teamService";
-
-const FIELDS = ["IT", "Elektroonika", "Mehaanika", "Ehitus"] as const;
+import { fetchTeamYears, fetchTeams, type TeamRow } from "@/services/teamService";
+import { getFields } from "@/services/fieldService";
 
 function fmtDate(iso: string) {
   try { return new Date(iso).toLocaleString(); } catch { return iso; }
@@ -43,6 +42,8 @@ function stringifyCustomAnswers(customAnswers?: Record<string, string | boolean 
 
 export default function RegistrationsTable() {
   const [data, setData] = useState<TeamRow[]>([]);
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
+  const [availableYears, setAvailableYears] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [q, setQ] = useState("");
@@ -57,15 +58,13 @@ export default function RegistrationsTable() {
   const skip = (page - 1) * take;
   const pages = useMemo(() => Math.max(1, Math.ceil(total / take)), [total]);
 
-  const availableYears = useMemo(() => {
-  const years = new Set<string>();
-  data.forEach(t => {
-      if (t.createdAt) {
-        years.add(t.createdAt.slice(0, 4));
-      }
-    });
-    return Array.from(years).sort((a, b) => b.localeCompare(a));
-  }, [data]);
+  const fieldOptions = useMemo(() => {
+    const fromTeams = data
+      .map((team) => team.field?.trim())
+      .filter((value): value is string => Boolean(value));
+
+    return Array.from(new Set([...availableFields, ...fromTeams])).sort((a, b) => a.localeCompare(b));
+  }, [availableFields, data]);
 
   function normalize(v?: string | null) {
     return (v ?? "").trim().toLowerCase();
@@ -94,7 +93,7 @@ export default function RegistrationsTable() {
     }
 
     if (yearFilter !== "all") {
-      out = out.filter(t => t.createdAt?.startsWith(yearFilter));
+      out = out.filter(t => String(t.edition?.year ?? t.createdAt?.slice(0, 4) ?? "") === yearFilter);
     }
 
     return out;
@@ -203,7 +202,12 @@ async function load(p = page, query = q) {
     const skip = isSearching ? 0 : (p - 1) * take;
     const pageSize = isSearching ? SEARCH_FETCH_SIZE : take;
 
-    const res = await fetchTeams({ take: pageSize, skip, q: isSearching ? query : undefined });
+    const res = await fetchTeams({
+      take: pageSize,
+      skip,
+      q: isSearching ? query : undefined,
+      year: yearFilter !== "all" ? Number(yearFilter) : undefined,
+    });
     let items = res.items;
 
     items = applyFilters(items);
@@ -225,6 +229,42 @@ async function load(p = page, query = q) {
 
     // lae alati kui page muutub
     useEffect(() => { load(page, q); /* eslint-disable-next-line */ }, [page]);
+
+    useEffect(() => {
+      const loadFields = async () => {
+        try {
+          const fields = await getFields();
+          const names = fields
+            .map((field) => field.name?.trim())
+            .filter((value): value is string => Boolean(value));
+          setAvailableFields(Array.from(new Set(names)).sort((a, b) => a.localeCompare(b)));
+        } catch (error) {
+          console.error("Failed to load fields for registrations filter:", error);
+          setAvailableFields([]);
+        }
+      };
+
+      loadFields();
+    }, []);
+
+    useEffect(() => {
+      const loadYears = async () => {
+        try {
+          const response = await fetchTeamYears();
+          const years = Array.from(new Set((response.years || []).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+          setAvailableYears(years);
+        } catch (error) {
+          console.error("Failed to load years for registrations filter:", error);
+          const fallbackYears = Array.from(
+            new Set(data.map((team) => String(team.edition?.year ?? team.createdAt?.slice(0, 4) ?? "")).filter(Boolean))
+          ).sort((a, b) => b.localeCompare(a));
+          setAvailableYears(fallbackYears);
+        }
+      };
+
+      loadYears();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
       const t = setTimeout(() => {
@@ -278,7 +318,7 @@ async function load(p = page, query = q) {
               >
                 All
               </button>
-              {FIELDS.map(f => (
+              {fieldOptions.map(f => (
                 <button
                   key={f}
                   onClick={() => { setFieldFilter(f); setPage(1); load(1, q); }}
@@ -316,7 +356,7 @@ async function load(p = page, query = q) {
             <button onClick={() => { setPage(1); load(1, q); }} className="px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200" disabled={loading}>
               {loading ? "Searching…" : "Search"}
             </button>
-            <button onClick={() => { setQ(""); setStatusFilter("all"); setFieldFilter("all"); setPage(1); load(1, ""); }} className="px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200" disabled={loading}>
+            <button onClick={() => { setQ(""); setStatusFilter("all"); setFieldFilter("all"); setYearFilter("all"); setPage(1); load(1, ""); }} className="px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200" disabled={loading}>
               Reset
             </button>
           </div>

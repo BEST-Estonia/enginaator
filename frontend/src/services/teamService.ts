@@ -57,3 +57,18 @@ export async function fetchTeams(opts: {
   }
   return res.json() as Promise<{ items: TeamRow[]; total: number }>;
 }
+
+export async function fetchTeamYears() {
+  const url = `${BASE}/teams/years`;
+  const res = await fetch(
+    url,
+    getAdminRequestInit({ cache: 'no-store' }, false),
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`fetchTeamYears ${res.status} @ ${url} : ${text.slice(0,160)}…`);
+  }
+
+  return res.json() as Promise<{ years: string[] }>;
+}

@@ -306,6 +306,22 @@ exports.getTeamStats = async (_req, res) => {
   }
 };
 
+// GET /api/teams/years
+exports.getTeamYears = async (_req, res) => {
+  try {
+    const editions = await prisma.edition.findMany({
+      where: { teams: { some: {} } },
+      select: { year: true },
+      orderBy: { year: 'desc' },
+    });
+
+    res.json({ years: editions.map((edition) => String(edition.year)) });
+  } catch (e) {
+    console.error('getTeamYears error:', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+};
+
 // DELETE /api/teams/:id
 exports.deleteTeam = async (req, res) => {
   const { id } = req.params;

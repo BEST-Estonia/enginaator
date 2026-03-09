@@ -42,6 +42,7 @@ const upload = multer({ storage });
 router.post('/teams/register', teamController.registerTeam);
 router.get('/teams', requireAdminAuth, teamController.getAllTeams);
 router.get('/teams/stats', requireAdminAuth, teamController.getTeamStats);
+router.get('/teams/years', requireAdminAuth, teamController.getTeamYears);
 router.delete('/teams/:id', requireAdminAuth, teamController.deleteTeam);
 
 // --- Hero ---
