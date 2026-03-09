@@ -23,6 +23,7 @@ import { fetchTeams } from '@/services/teamService';
 import RegistrationsTable from '@/app/components/RegistrationsTable';
 import RegistrationSettingsEditor from './RegistrationSettingsEditor';
 import RegistrationFormEditor from './RegistrationFormEditor';
+import AdminPasswordEditor from './AdminPasswordEditor';
 
 
 
@@ -250,6 +251,21 @@ const AdminDashboard = () => {
                 <span className="font-medium">Registration Form</span>
               </button>
             </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6">
+                Security
+              </h3>
+              <button
+                onClick={() => setActiveSection('adminPassword')}
+                className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                  activeSection === 'adminPassword' ? 'bg-red-50 text-red-600'
+                  : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <span className="font-medium">Change Password</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -396,6 +412,9 @@ const AdminDashboard = () => {
             )}
             {activeSection === 'registrationForm' && (
               <RegistrationFormEditor />
+            )}
+            {activeSection === 'adminPassword' && (
+              <AdminPasswordEditor />
             )}
           </main>
         </div>
