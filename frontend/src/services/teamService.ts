@@ -7,6 +7,7 @@ export type TeamRow = {
   leaderName: string;
   leaderEmail: string;
   createdAt: string;
+  customAnswers?: Record<string, string | boolean | null> | null;
 
   queueNo: number;
   isWaitlisted: boolean;

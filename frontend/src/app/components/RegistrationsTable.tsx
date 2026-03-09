@@ -27,6 +27,20 @@ function rank(t: { name:string; leaderName:string; leaderEmail:string; field:str
   return score * 1_000_000 + new Date(t.createdAt).getTime();
 }
 
+function prettifyKey(key: string) {
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/^./, (char) => char.toUpperCase());
+}
+
+function stringifyCustomAnswers(customAnswers?: Record<string, string | boolean | null> | null) {
+  if (!customAnswers || Object.keys(customAnswers).length === 0) return "";
+  return Object.entries(customAnswers)
+    .map(([key, value]) => `${prettifyKey(key)}: ${typeof value === 'boolean' ? (value ? 'Yes' : 'No') : (value ?? '')}`)
+    .join(' | ');
+}
+
 export default function RegistrationsTable() {
   const [data, setData] = useState<TeamRow[]>([]);
   const [total, setTotal] = useState(0);
@@ -134,6 +148,7 @@ async function handleExportExcel() {
         "Members Count": t._count?.members ?? t.members?.length ?? 0,
         "Accommodation (count)": accCount,
         "Consent Given (count)": consentCount,
+        "Custom Answers": stringifyCustomAnswers(t.customAnswers),
         Created: t.createdAt,
         ID: t.id,
       };
@@ -437,48 +452,64 @@ async function load(p = page, query = q) {
                         {(!t.members || t.members.length === 0) ? (
                           <div className="text-sm text-gray-500">No members listed.</div>
                         ) : (
-                          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {t.members.map(m => (
-                              <div key={m.id} className="rounded-md border bg-white p-3 space-y-2">
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="font-medium text-gray-900 truncate">{m.name || "—"}</div>
-                                  <span className="shrink-0 inline-flex items-center rounded px-2 py-0.5 text-[10px] border bg-gray-50 text-gray-700 border-gray-200">
-                                    T-shirt: {m.shirtSize || "—"}
-                                  </span>
-                                </div>
-
-                                <div className="text-xs text-gray-500">
-                                  {(m.email || "—")}{m.phone ? ` • ${m.phone}` : ""}
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                  <div className="text-gray-600">Age: <span className="text-gray-800">{m.age || "—"}</span></div>
-                                  <div className="text-gray-600">School: <span className="text-gray-800">{m.school || "—"}</span></div>
-                                </div>
-
-                                {m.diet ? (
-                                  <div className="text-xs text-gray-600">
-                                    Diet: <span className="text-gray-800">{m.diet}</span>
-                                  </div>
-                                ) : null}
-
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
-                                    ${m.accommodation
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                      : "bg-gray-50 text-gray-600 border-gray-200"}`}>
-                                    {m.accommodation ? "Accommodation: yes" : "Accommodation: no"}
-                                  </span>
-
-                                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
-                                    ${m.consent
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                      : "bg-red-50 text-red-700 border-red-200"}`}>
-                                    {m.consent ? "Consent: given" : "Consent: missing"}
-                                  </span>
+                          <div className="space-y-4">
+                            {t.customAnswers && Object.keys(t.customAnswers).length > 0 ? (
+                              <div className="rounded-md border bg-white p-3">
+                                <div className="text-sm font-medium text-gray-900 mb-2">Custom registration answers</div>
+                                <div className="grid md:grid-cols-2 gap-2">
+                                  {Object.entries(t.customAnswers).map(([key, value]) => (
+                                    <div key={key} className="text-xs text-gray-700">
+                                      <span className="font-medium text-gray-900">{prettifyKey(key)}:</span>{" "}
+                                      {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : (value ?? '—')}
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
-                            ))}
+                            ) : null}
+
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {t.members.map(m => (
+                                <div key={m.id} className="rounded-md border bg-white p-3 space-y-2">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="font-medium text-gray-900 truncate">{m.name || "—"}</div>
+                                    <span className="shrink-0 inline-flex items-center rounded px-2 py-0.5 text-[10px] border bg-gray-50 text-gray-700 border-gray-200">
+                                      T-shirt: {m.shirtSize || "—"}
+                                    </span>
+                                  </div>
+
+                                  <div className="text-xs text-gray-500">
+                                    {(m.email || "—")}{m.phone ? ` • ${m.phone}` : ""}
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="text-gray-600">Age: <span className="text-gray-800">{m.age || "—"}</span></div>
+                                    <div className="text-gray-600">School: <span className="text-gray-800">{m.school || "—"}</span></div>
+                                  </div>
+
+                                  {m.diet ? (
+                                    <div className="text-xs text-gray-600">
+                                      Diet: <span className="text-gray-800">{m.diet}</span>
+                                    </div>
+                                  ) : null}
+
+                                  <div className="flex flex-wrap gap-2 pt-1">
+                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
+                                      ${m.accommodation
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                        : "bg-gray-50 text-gray-600 border-gray-200"}`}>
+                                      {m.accommodation ? "Accommodation: yes" : "Accommodation: no"}
+                                    </span>
+
+                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border
+                                      ${m.consent
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                        : "bg-red-50 text-red-700 border-red-200"}`}>
+                                      {m.consent ? "Consent: given" : "Consent: missing"}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>

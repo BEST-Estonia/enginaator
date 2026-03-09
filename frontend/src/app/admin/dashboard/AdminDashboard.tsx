@@ -22,6 +22,7 @@ import FaqEditor from './FaqEditor';
 import { fetchTeams } from '@/services/teamService';
 import RegistrationsTable from '@/app/components/RegistrationsTable';
 import RegistrationSettingsEditor from './RegistrationSettingsEditor';
+import RegistrationFormEditor from './RegistrationFormEditor';
 
 
 
@@ -239,6 +240,15 @@ const AdminDashboard = () => {
               >
                 <span className="font-medium">Registration Visibility</span>
               </button>
+              <button 
+                onClick={() => setActiveSection('registrationForm')}
+                className={`w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors ${
+                  activeSection === 'registrationForm' ? 'bg-red-50 text-red-600'
+                  : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <span className="font-medium">Registration Form</span>
+              </button>
             </div>
           </div>
         </div>
@@ -383,6 +393,9 @@ const AdminDashboard = () => {
             )}
             {activeSection === 'registrationSettings' && (
               <RegistrationSettingsEditor />
+            )}
+            {activeSection === 'registrationForm' && (
+              <RegistrationFormEditor />
             )}
           </main>
         </div>
