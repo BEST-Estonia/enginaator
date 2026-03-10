@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
   if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
   res.cookie(ADMIN_COOKIE_NAME, token, getCookieOptions());
-  res.json({ success: true });
+  res.json({ success: true, token });
 };
 
 exports.logout = async (_req, res) => {
