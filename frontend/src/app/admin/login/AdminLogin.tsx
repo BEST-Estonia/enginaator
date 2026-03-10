@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import engikaLogo from '@/assets/engikaLogo.png';
+import { clearAdminToken, setAdminToken } from '@/lib/adminAuth';
 
 
 const AdminLogin = () => {
@@ -32,12 +33,18 @@ const AdminLogin = () => {
         body: JSON.stringify({ email, password })
       });
       if (res.ok) {
+        const payload = await res.json().catch(() => ({} as { token?: string }));
+        if (payload?.token) {
+          setAdminToken(payload.token);
+        }
         setUiSessionCookie();
         router.push('/admin/dashboard');
       } else {
+        clearAdminToken();
         setError('Invalid email or password');
       }
     } catch (err) {
+      clearAdminToken();
       setError('Login failed. Please try again.');
     } finally {
       setIsLoading(false);

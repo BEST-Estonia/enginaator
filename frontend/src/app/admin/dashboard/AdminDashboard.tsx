@@ -24,6 +24,7 @@ import RegistrationsTable from '@/app/components/RegistrationsTable';
 import RegistrationSettingsEditor from './RegistrationSettingsEditor';
 import RegistrationFormEditor from './RegistrationFormEditor';
 import AdminPasswordEditor from './AdminPasswordEditor';
+import { clearAdminToken } from '@/lib/adminAuth';
 
 
 
@@ -293,6 +294,7 @@ const AdminDashboard = () => {
                       credentials: 'include',
                     });
                   } finally {
+                    clearAdminToken();
                     clearUiSessionCookie();
                     router.push('/admin/login');
                   }
