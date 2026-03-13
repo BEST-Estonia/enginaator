@@ -89,7 +89,7 @@ function AccordionItem({
         onTransitionEnd={onTransitionEnd}
         aria-hidden={!open}
       >
-        <div className="pb-5 text-sm sm:text-base opacity-80">{a}</div>
+        <div className="pb-5 text-sm sm:text-base opacity-80 whitespace-pre-line">{a}</div>
       </div>
     </div>
   );
